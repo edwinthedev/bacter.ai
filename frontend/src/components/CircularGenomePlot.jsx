@@ -99,7 +99,6 @@ const ResistanceRadar = ({ genes }) => {
     const a = (i / n) * 2 * Math.PI - Math.PI / 2;
     return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
   };
-
   const radarPoints = scores.map((s, i) => getPoint(i, s * maxR));
   const radarPath = radarPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ') + 'Z';
 
@@ -139,11 +138,28 @@ const CircularGenomePlot = ({
   onGeneClick,
 }) => {
   const svgRef = useRef(null);
+  const zoomRef = useRef(null);
   const [activeGene, setActiveGene] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const handleGeneClick = (gene) => {
     setActiveGene(gene);
     if (onGeneClick) onGeneClick(gene);
+  };
+
+  const handleZoomIn = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 1.4);
+  };
+
+  const handleZoomOut = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 1 / 1.4);
+  };
+
+  const handleReset = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(400).call(zoomRef.current.transform, d3.zoomIdentity);
   };
 
   useEffect(() => {
@@ -152,23 +168,28 @@ const CircularGenomePlot = ({
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const W = 560, H = 560, cx = W / 2, cy = H / 2;
-    const R_DNA_OUTER = 240, R_DNA_INNER = 224, R_GC_BASE = 170, R_INNER = 110;
+    // Larger viewBox to accommodate plasmids around the outside
+    const W = 780, H = 780, cx = W / 2, cy = H / 2;
+    const R_DNA_OUTER = 220, R_DNA_INNER = 204, R_GC_BASE = 155, R_INNER = 100;
 
-    const root = svg.attr('viewBox', `0 0 ${W} ${H}`)
-      .append('g').attr('transform', `translate(${cx},${cy})`);
+    svg.attr('viewBox', `0 0 ${W} ${H}`);
 
-    const genomeLength = genomeData.chromosome.length;
-    const angle = d3.scaleLinear().domain([0, genomeLength]).range([0, 2 * Math.PI]);
+    // Background
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#020617').attr('rx', 16);
 
     const defs = svg.append('defs');
-    svg.insert('rect', ':first-child').attr('width', W).attr('height', H).attr('fill', '#020617').attr('rx', 16);
-
     const geneGlow = defs.append('filter').attr('id', 'gene-glow2');
     geneGlow.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
     const merge = geneGlow.append('feMerge');
     merge.append('feMergeNode').attr('in', 'blur');
     merge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+    // Zoomable group
+    const zoomGroup = svg.append('g').attr('class', 'zoom-group');
+    const root = zoomGroup.append('g').attr('transform', `translate(${cx},${cy})`);
+
+    const genomeLength = genomeData.chromosome.length;
+    const angle = d3.scaleLinear().domain([0, genomeLength]).range([0, 2 * Math.PI]);
 
     root.append('circle').attr('r', R_INNER).attr('fill', '#0a0f1e').attr('opacity', 0.9);
 
@@ -177,10 +198,10 @@ const CircularGenomePlot = ({
       const gcVals = genomeData.gc_content_windows.map(w => w.gc);
       const avgGC = d3.mean(gcVals);
       const gcExt = d3.max(gcVals.map(v => Math.abs(v - avgGC)));
-      const gcR = d3.scaleLinear().domain([avgGC - gcExt, avgGC + gcExt]).range([R_GC_BASE - 28, R_GC_BASE + 28]);
+      const gcR = d3.scaleLinear().domain([avgGC - gcExt, avgGC + gcExt]).range([R_GC_BASE - 25, R_GC_BASE + 25]);
 
       root.append('circle').attr('r', R_GC_BASE).attr('fill', 'none')
-        .attr('stroke', '#1e3a5f').attr('stroke-width', 56).attr('opacity', 0.12);
+        .attr('stroke', '#1e3a5f').attr('stroke-width', 50).attr('opacity', 0.12);
 
       root.append('path')
         .datum([...genomeData.gc_content_windows, genomeData.gc_content_windows[0]])
@@ -192,7 +213,7 @@ const CircularGenomePlot = ({
         .attr('stroke', '#38bdf8').attr('stroke-width', 0.5).attr('stroke-dasharray', '2,5').attr('opacity', 0.2);
     }
 
-    // DNA ring
+    // DNA ring segments
     for (let i = 0; i < 120; i++) {
       const a0 = (i / 120) * 2 * Math.PI - Math.PI / 2;
       const a1 = ((i + 0.88) / 120) * 2 * Math.PI - Math.PI / 2;
@@ -249,14 +270,14 @@ const CircularGenomePlot = ({
         .transition().delay(1000 + i * 200).duration(300).attr('opacity', 1);
     });
 
-    // Plasmids
+    // Plasmids — positioned with more room since viewBox is larger
     const plasmidGenes = (resistanceGenes || []).filter(g => g.location === 'plasmid');
     const plasmidNames = [...new Set(plasmidGenes.map(g => g.plasmid_name))];
     plasmidNames.forEach((pName, pIdx) => {
       const pGenes = plasmidGenes.filter(g => g.plasmid_name === pName);
-      const pR = 42;
+      const pR = 48;
       const placementAngle = (pIdx / Math.max(plasmidNames.length, 1)) * 2 * Math.PI + Math.PI / 4;
-      const pDist = R_DNA_OUTER + 55;
+      const pDist = R_DNA_OUTER + 90;
       const pCx = pDist * Math.cos(placementAngle), pCy = pDist * Math.sin(placementAngle);
 
       root.append('line')
@@ -291,7 +312,8 @@ const CircularGenomePlot = ({
           .attr('x', (pR + 16) * Math.cos(gAngle)).attr('y', (pR + 16) * Math.sin(gAngle))
           .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
           .attr('fill', gene.color).attr('font-size', '8px').attr('font-weight', '700').attr('font-family', 'monospace')
-          .text(gene.gene_id).attr('opacity', 0).transition().delay(2600 + gi * 100).duration(300).attr('opacity', 1);
+          .text(gene.gene_id).attr('opacity', 0)
+          .transition().delay(2600 + gi * 100).duration(300).attr('opacity', 1);
       });
     });
 
@@ -306,13 +328,27 @@ const CircularGenomePlot = ({
       .attr('fill', '#ef4444').attr('font-size', '10px').attr('font-weight', '600').attr('font-family', 'monospace')
       .text(`${resistanceGenes?.length || 0} resistance genes`);
 
+    // ── D3 Zoom ──
+    const zoom = d3.zoom()
+      .scaleExtent([0.4, 5])
+      .on('zoom', (event) => {
+        zoomGroup.attr('transform', event.transform);
+        setZoomLevel(Math.round(event.transform.k * 100) / 100);
+      });
+
+    zoomRef.current = zoom;
+    svg.call(zoom);
+
+    // Start at a scale that fits everything
+    svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.85));
+
   }, [genomeData, resistanceGenes]);
 
   return (
     <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)', borderRadius: 16, padding: 24 }}>
 
       {/* ── Top: title left, legend right ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
           <h2 style={{ color: '#f1f5f9', fontFamily: 'monospace', fontSize: 18, fontWeight: 800, margin: 0, letterSpacing: '0.05em' }}>
             GENOME MAP
@@ -336,9 +372,28 @@ const CircularGenomePlot = ({
         </div>
       </div>
 
-      {/* ── Centered genome map ── */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
-        <svg ref={svgRef} style={{ width: '100%', maxWidth: 560, display: 'block' }} />
+      {/* ── Zoom controls ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+        {[
+          { label: '−', action: handleZoomOut },
+          { label: '⟳', action: handleReset },
+          { label: '+', action: handleZoomIn },
+        ].map(({ label, action }) => (
+          <button key={label} onClick={action} style={{
+            background: '#1e293b', border: '1px solid #334155', color: '#94a3b8',
+            fontFamily: 'monospace', fontSize: 14, fontWeight: 700,
+            width: 30, height: 30, borderRadius: 6, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>{label}</button>
+        ))}
+        <span style={{ color: '#475569', fontFamily: 'monospace', fontSize: 10 }}>
+          {Math.round(zoomLevel * 100)}% · scroll to zoom · drag to pan
+        </span>
+      </div>
+
+      {/* ── Genome map (scroll/drag enabled) ── */}
+      <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 24, cursor: 'grab' }}>
+        <svg ref={svgRef} style={{ width: '100%', display: 'block' }} />
       </div>
 
       {/* ── Bottom: radar left, gene list right ── */}
