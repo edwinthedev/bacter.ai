@@ -2,7 +2,6 @@ import { useState } from 'react';
 import axios from 'axios';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
-import ClinicalRecommendation from './components/ClinicalRecommendation';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const getAntibioticClass = (drug) => ({
@@ -444,11 +443,48 @@ const ResultsView = ({ pathogen, results, fileName }) => {
         )}
         {activeTab === 'Mechanisms'      && <TabMechanisms results={results} />}
         {activeTab === 'Recommendations' && (
-          <ClinicalRecommendation
-            predictions={results.raw_predictions.length > 0 ? results.raw_predictions : results.predictions}
-            resistanceGenes={results.resistance_genes}
-          />
-        )}
+          <div style={{ maxWidth: 640 }}>
+            <div style={{ marginBottom: 40 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid #f3f4f6' }}>
+                Recommended
+              </h3>
+              <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {Object.entries(results.predictions)
+                  .filter(([, v]) => v.prediction === 'susceptible')
+                  .sort(([, a], [, b]) => a.probability - b.probability)
+                  .slice(0, 3)
+                  .map(([drug, data]) => (
+                    <li key={drug} style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 14 }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0, marginTop: 6 }} />
+                      <span style={{ fontWeight: 500, color: '#111827', textTransform: 'capitalize' }}>{drug}</span>
+                      <span style={{ color: '#9ca3af', fontSize: 12 }}>— {Math.round((1 - data.probability) * 100)}% predicted effective</span>
+                    </li>
+          ))}
+        </ul>
+      </div>
+
+    <div style={{ marginBottom: 40 }}>
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 16, paddingBottom: 8, borderBottom: '1px solid #f3f4f6' }}>
+        Avoid
+      </h3>
+      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {Object.entries(results.predictions)
+          .filter(([, v]) => v.prediction === 'resistant')
+          .map(([drug]) => (
+            <li key={drug} style={{ display: 'flex', alignItems: 'baseline', gap: 8, fontSize: 14 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ef4444', flexShrink: 0, marginTop: 6 }} />
+              <span style={{ fontWeight: 500, color: '#b91c1c', textTransform: 'capitalize' }}>{drug}</span>
+              <span style={{ color: '#9ca3af', fontSize: 12 }}>— Resistant</span>
+            </li>
+          ))}
+      </ul>
+    </div>
+
+    <p style={{ fontSize: 12, color: '#9ca3af', fontStyle: 'italic', borderTop: '1px solid #f3f4f6', paddingTop: 24 }}>
+      Disclaimer: These are AI-generated predictions based on genomic data. Always confirm with phenotypic testing before clinical application.
+    </p>
+  </div>
+)}
       </div>
     </div>
   );
