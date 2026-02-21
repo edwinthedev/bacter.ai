@@ -93,9 +93,7 @@ function App() {
     setPage('results');
 
     try {
-      const res = await axios.post('http://localhost:5000/api/analyze_fasta', {
-        fasta: fastaText
-      });
+      const res = await axios.post('/api/analyze_fasta', { fasta: fastaText })
       setAnalysisResults(transformApiResponse(res.data));
     } catch (err) {
       console.error('API unavailable, using mock data:', err);
