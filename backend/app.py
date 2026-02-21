@@ -26,6 +26,7 @@ MODELS_DIR = os.path.join(BASE_DIR, "..", "models")
 # Add training dir to path so we can import extract_kmers
 sys.path.insert(0, os.path.join(BASE_DIR, "..", "training"))
 from extract_kmers import build_kmer_index, K
+from resistance_genes import compute_genome_stats, infer_resistance_genes
 
 # Pre-load k-mer index and models at startup
 KMER_INDEX = build_kmer_index()
@@ -191,6 +192,14 @@ def analyze_fasta():
 
     resistant_count = sum(1 for p in predictions if p["prediction"] == "Resistant")
 
+    # Compute genome stats from FASTA
+    genome_stats = compute_genome_stats(fasta_text)
+
+    # Infer resistance genes based on predictions
+    resistance_genes = infer_resistance_genes(
+        predictions, genome_stats["chromosome"]["length"]
+    )
+
     return jsonify({
         "genome_name": genome_name,
         "organism": "Escherichia coli",
@@ -200,6 +209,8 @@ def analyze_fasta():
             "resistant_count": resistant_count,
             "susceptible_count": len(predictions) - resistant_count,
         },
+        "genome_data": genome_stats,
+        "resistance_genes": resistance_genes,
     })
 
 

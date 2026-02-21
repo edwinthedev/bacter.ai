@@ -9,7 +9,10 @@ import pandas as pd
 import json
 import os
 import joblib
+import sys
 from extract_kmers import build_kmer_index, count_kmers
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
+from resistance_genes import compute_genome_stats, infer_resistance_genes
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 PROCESSED_DIR = os.path.join(DATA_DIR, "processed")
@@ -129,6 +132,17 @@ def main():
                 status = status or "MISMATCH"
             print(f"  {ab:40s} -> {predictions[-1]['prediction']:12s} (conf={confidence:.3f}) {status}")
 
+        # Compute genome stats from FASTA
+        with open(fasta_path) as f:
+            fasta_text = f.read()
+        genome_stats = compute_genome_stats(fasta_text)
+
+        # Infer resistance genes
+        resistance_genes = infer_resistance_genes(
+            predictions, genome_stats["chromosome"]["length"]
+        )
+        print(f"  Inferred {len(resistance_genes)} resistance genes")
+
         # Build output JSON
         output = {
             "genome_id": gid,
@@ -140,6 +154,8 @@ def main():
                 "resistant_count": sum(1 for p in predictions if p["prediction"] == "Resistant"),
                 "susceptible_count": sum(1 for p in predictions if p["prediction"] == "Susceptible"),
             },
+            "genome_data": genome_stats,
+            "resistance_genes": resistance_genes,
         }
 
         output_path = os.path.join(OUTPUT_DIR, f"{gid}.json")

@@ -318,5 +318,700 @@
     "total_antibiotics": 10,
     "resistant_count": 6,
     "susceptible_count": 4
-  }
+  },
+  "genome_data": {
+    "chromosome": {
+      "length": 5159992
+    },
+    "gc_content_windows": [
+      {
+        "start": 0,
+        "end": 42999,
+        "gc": 0.4954
+      },
+      {
+        "start": 42999,
+        "end": 85998,
+        "gc": 0.519
+      },
+      {
+        "start": 85998,
+        "end": 128997,
+        "gc": 0.5226
+      },
+      {
+        "start": 128997,
+        "end": 171996,
+        "gc": 0.4621
+      },
+      {
+        "start": 171996,
+        "end": 214995,
+        "gc": 0.5171
+      },
+      {
+        "start": 214995,
+        "end": 257994,
+        "gc": 0.514
+      },
+      {
+        "start": 257994,
+        "end": 300993,
+        "gc": 0.5172
+      },
+      {
+        "start": 300993,
+        "end": 343992,
+        "gc": 0.4907
+      },
+      {
+        "start": 343992,
+        "end": 386991,
+        "gc": 0.5311
+      },
+      {
+        "start": 386991,
+        "end": 429990,
+        "gc": 0.4962
+      },
+      {
+        "start": 429990,
+        "end": 472989,
+        "gc": 0.5252
+      },
+      {
+        "start": 472989,
+        "end": 515988,
+        "gc": 0.5141
+      },
+      {
+        "start": 515988,
+        "end": 558987,
+        "gc": 0.5186
+      },
+      {
+        "start": 558987,
+        "end": 601986,
+        "gc": 0.5079
+      },
+      {
+        "start": 601986,
+        "end": 644985,
+        "gc": 0.5008
+      },
+      {
+        "start": 644985,
+        "end": 687984,
+        "gc": 0.5309
+      },
+      {
+        "start": 687984,
+        "end": 730983,
+        "gc": 0.5319
+      },
+      {
+        "start": 730983,
+        "end": 773982,
+        "gc": 0.5143
+      },
+      {
+        "start": 773982,
+        "end": 816981,
+        "gc": 0.5128
+      },
+      {
+        "start": 816981,
+        "end": 859980,
+        "gc": 0.4909
+      },
+      {
+        "start": 859980,
+        "end": 902979,
+        "gc": 0.4688
+      },
+      {
+        "start": 902979,
+        "end": 945978,
+        "gc": 0.5109
+      },
+      {
+        "start": 945978,
+        "end": 988977,
+        "gc": 0.5109
+      },
+      {
+        "start": 988977,
+        "end": 1031976,
+        "gc": 0.5176
+      },
+      {
+        "start": 1031976,
+        "end": 1074975,
+        "gc": 0.4972
+      },
+      {
+        "start": 1074975,
+        "end": 1117974,
+        "gc": 0.5084
+      },
+      {
+        "start": 1117974,
+        "end": 1160973,
+        "gc": 0.5068
+      },
+      {
+        "start": 1160973,
+        "end": 1203972,
+        "gc": 0.501
+      },
+      {
+        "start": 1203972,
+        "end": 1246971,
+        "gc": 0.4539
+      },
+      {
+        "start": 1246971,
+        "end": 1289970,
+        "gc": 0.5024
+      },
+      {
+        "start": 1289970,
+        "end": 1332969,
+        "gc": 0.5105
+      },
+      {
+        "start": 1332969,
+        "end": 1375968,
+        "gc": 0.467
+      },
+      {
+        "start": 1375968,
+        "end": 1418967,
+        "gc": 0.5209
+      },
+      {
+        "start": 1418967,
+        "end": 1461966,
+        "gc": 0.5042
+      },
+      {
+        "start": 1461966,
+        "end": 1504965,
+        "gc": 0.5054
+      },
+      {
+        "start": 1504965,
+        "end": 1547964,
+        "gc": 0.4401
+      },
+      {
+        "start": 1547964,
+        "end": 1590963,
+        "gc": 0.5218
+      },
+      {
+        "start": 1590963,
+        "end": 1633962,
+        "gc": 0.5181
+      },
+      {
+        "start": 1633962,
+        "end": 1676961,
+        "gc": 0.5201
+      },
+      {
+        "start": 1676961,
+        "end": 1719960,
+        "gc": 0.4765
+      },
+      {
+        "start": 1719960,
+        "end": 1762959,
+        "gc": 0.5017
+      },
+      {
+        "start": 1762959,
+        "end": 1805958,
+        "gc": 0.5408
+      },
+      {
+        "start": 1805958,
+        "end": 1848957,
+        "gc": 0.5215
+      },
+      {
+        "start": 1848957,
+        "end": 1891956,
+        "gc": 0.5232
+      },
+      {
+        "start": 1891956,
+        "end": 1934955,
+        "gc": 0.5243
+      },
+      {
+        "start": 1934955,
+        "end": 1977954,
+        "gc": 0.4795
+      },
+      {
+        "start": 1977954,
+        "end": 2020953,
+        "gc": 0.4778
+      },
+      {
+        "start": 2020953,
+        "end": 2063952,
+        "gc": 0.5151
+      },
+      {
+        "start": 2063952,
+        "end": 2106951,
+        "gc": 0.5128
+      },
+      {
+        "start": 2106951,
+        "end": 2149950,
+        "gc": 0.504
+      },
+      {
+        "start": 2149950,
+        "end": 2192949,
+        "gc": 0.5083
+      },
+      {
+        "start": 2192949,
+        "end": 2235948,
+        "gc": 0.5342
+      },
+      {
+        "start": 2235948,
+        "end": 2278947,
+        "gc": 0.4794
+      },
+      {
+        "start": 2278947,
+        "end": 2321946,
+        "gc": 0.494
+      },
+      {
+        "start": 2321946,
+        "end": 2364945,
+        "gc": 0.5214
+      },
+      {
+        "start": 2364945,
+        "end": 2407944,
+        "gc": 0.506
+      },
+      {
+        "start": 2407944,
+        "end": 2450943,
+        "gc": 0.5155
+      },
+      {
+        "start": 2450943,
+        "end": 2493942,
+        "gc": 0.495
+      },
+      {
+        "start": 2493942,
+        "end": 2536941,
+        "gc": 0.5251
+      },
+      {
+        "start": 2536941,
+        "end": 2579940,
+        "gc": 0.4979
+      },
+      {
+        "start": 2579940,
+        "end": 2622939,
+        "gc": 0.5264
+      },
+      {
+        "start": 2622939,
+        "end": 2665938,
+        "gc": 0.4965
+      },
+      {
+        "start": 2665938,
+        "end": 2708937,
+        "gc": 0.5102
+      },
+      {
+        "start": 2708937,
+        "end": 2751936,
+        "gc": 0.5186
+      },
+      {
+        "start": 2751936,
+        "end": 2794935,
+        "gc": 0.5286
+      },
+      {
+        "start": 2794935,
+        "end": 2837934,
+        "gc": 0.5043
+      },
+      {
+        "start": 2837934,
+        "end": 2880933,
+        "gc": 0.4861
+      },
+      {
+        "start": 2880933,
+        "end": 2923932,
+        "gc": 0.5205
+      },
+      {
+        "start": 2923932,
+        "end": 2966931,
+        "gc": 0.4633
+      },
+      {
+        "start": 2966931,
+        "end": 3009930,
+        "gc": 0.5024
+      },
+      {
+        "start": 3009930,
+        "end": 3052929,
+        "gc": 0.5191
+      },
+      {
+        "start": 3052929,
+        "end": 3095928,
+        "gc": 0.5218
+      },
+      {
+        "start": 3095928,
+        "end": 3138927,
+        "gc": 0.5028
+      },
+      {
+        "start": 3138927,
+        "end": 3181926,
+        "gc": 0.5058
+      },
+      {
+        "start": 3181926,
+        "end": 3224925,
+        "gc": 0.5175
+      },
+      {
+        "start": 3224925,
+        "end": 3267924,
+        "gc": 0.4987
+      },
+      {
+        "start": 3267924,
+        "end": 3310923,
+        "gc": 0.5193
+      },
+      {
+        "start": 3310923,
+        "end": 3353922,
+        "gc": 0.48
+      },
+      {
+        "start": 3353922,
+        "end": 3396921,
+        "gc": 0.5019
+      },
+      {
+        "start": 3396921,
+        "end": 3439920,
+        "gc": 0.4927
+      },
+      {
+        "start": 3439920,
+        "end": 3482919,
+        "gc": 0.5119
+      },
+      {
+        "start": 3482919,
+        "end": 3525918,
+        "gc": 0.5058
+      },
+      {
+        "start": 3525918,
+        "end": 3568917,
+        "gc": 0.5009
+      },
+      {
+        "start": 3568917,
+        "end": 3611916,
+        "gc": 0.5012
+      },
+      {
+        "start": 3611916,
+        "end": 3654915,
+        "gc": 0.4854
+      },
+      {
+        "start": 3654915,
+        "end": 3697914,
+        "gc": 0.492
+      },
+      {
+        "start": 3697914,
+        "end": 3740913,
+        "gc": 0.5113
+      },
+      {
+        "start": 3740913,
+        "end": 3783912,
+        "gc": 0.5389
+      },
+      {
+        "start": 3783912,
+        "end": 3826911,
+        "gc": 0.5089
+      },
+      {
+        "start": 3826911,
+        "end": 3869910,
+        "gc": 0.5118
+      },
+      {
+        "start": 3869910,
+        "end": 3912909,
+        "gc": 0.4802
+      },
+      {
+        "start": 3912909,
+        "end": 3955908,
+        "gc": 0.47
+      },
+      {
+        "start": 3955908,
+        "end": 3998907,
+        "gc": 0.518
+      },
+      {
+        "start": 3998907,
+        "end": 4041906,
+        "gc": 0.5152
+      },
+      {
+        "start": 4041906,
+        "end": 4084905,
+        "gc": 0.5102
+      },
+      {
+        "start": 4084905,
+        "end": 4127904,
+        "gc": 0.4914
+      },
+      {
+        "start": 4127904,
+        "end": 4170903,
+        "gc": 0.4868
+      },
+      {
+        "start": 4170903,
+        "end": 4213902,
+        "gc": 0.5064
+      },
+      {
+        "start": 4213902,
+        "end": 4256901,
+        "gc": 0.4898
+      },
+      {
+        "start": 4256901,
+        "end": 4299900,
+        "gc": 0.4927
+      },
+      {
+        "start": 4299900,
+        "end": 4342899,
+        "gc": 0.5126
+      },
+      {
+        "start": 4342899,
+        "end": 4385898,
+        "gc": 0.4994
+      },
+      {
+        "start": 4385898,
+        "end": 4428897,
+        "gc": 0.4873
+      },
+      {
+        "start": 4428897,
+        "end": 4471896,
+        "gc": 0.4734
+      },
+      {
+        "start": 4471896,
+        "end": 4514895,
+        "gc": 0.4811
+      },
+      {
+        "start": 4514895,
+        "end": 4557894,
+        "gc": 0.5266
+      },
+      {
+        "start": 4557894,
+        "end": 4600893,
+        "gc": 0.5059
+      },
+      {
+        "start": 4600893,
+        "end": 4643892,
+        "gc": 0.4777
+      },
+      {
+        "start": 4643892,
+        "end": 4686891,
+        "gc": 0.5106
+      },
+      {
+        "start": 4686891,
+        "end": 4729890,
+        "gc": 0.5191
+      },
+      {
+        "start": 4729890,
+        "end": 4772889,
+        "gc": 0.5053
+      },
+      {
+        "start": 4772889,
+        "end": 4815888,
+        "gc": 0.4981
+      },
+      {
+        "start": 4815888,
+        "end": 4858887,
+        "gc": 0.4607
+      },
+      {
+        "start": 4858887,
+        "end": 4901886,
+        "gc": 0.44
+      },
+      {
+        "start": 4901886,
+        "end": 4944885,
+        "gc": 0.4645
+      },
+      {
+        "start": 4944885,
+        "end": 4987884,
+        "gc": 0.53
+      },
+      {
+        "start": 4987884,
+        "end": 5030883,
+        "gc": 0.5195
+      },
+      {
+        "start": 5030883,
+        "end": 5073882,
+        "gc": 0.5212
+      },
+      {
+        "start": 5073882,
+        "end": 5116881,
+        "gc": 0.5075
+      },
+      {
+        "start": 5116881,
+        "end": 5159880,
+        "gc": 0.5211
+      }
+    ]
+  },
+  "resistance_genes": [
+    {
+      "gene_id": "dfrA17",
+      "position_start": 1367241,
+      "position_end": 1368269,
+      "location": "chromosome",
+      "color": "#06b6d4",
+      "mechanism": "Trimethoprim-resistant dihydrofolate reductase",
+      "drugs_defeated": [
+        "trimethoprim/sulfamethoxazole"
+      ],
+      "spreadable": false,
+      "description": "dfrA17 encodes a variant dihydrofolate reductase with over 10,000-fold reduced affinity for trimethoprim. It is commonly found within class 1 integrons alongside other resistance gene cassettes."
+    },
+    {
+      "gene_id": "gyrA-S83L",
+      "position_start": 3625106,
+      "position_end": 3627424,
+      "location": "chromosome",
+      "color": "#a855f7",
+      "mechanism": "DNA gyrase target mutation",
+      "drugs_defeated": [
+        "ciprofloxacin",
+        "levofloxacin"
+      ],
+      "spreadable": false,
+      "description": "The S83L mutation in the DNA gyrase A subunit (gyrA) is the most common fluoroquinolone resistance mechanism in E. coli. It reduces drug binding affinity to the gyrase-DNA complex, the primary target of fluoroquinolones."
+    },
+    {
+      "gene_id": "TEM-1",
+      "position_start": 2407113,
+      "position_end": 2408214,
+      "location": "plasmid",
+      "plasmid_name": "pTEM",
+      "color": "#f97316",
+      "mechanism": "Class A \u03b2-lactamase",
+      "drugs_defeated": [
+        "ampicillin"
+      ],
+      "spreadable": true,
+      "description": "TEM-1 is the most common plasmid-mediated \u03b2-lactamase in E. coli. It hydrolyzes penicillins like ampicillin, and is found in over 50% of ampicillin-resistant isolates worldwide."
+    },
+    {
+      "gene_id": "sul2",
+      "position_start": 1972427,
+      "position_end": 1973312,
+      "location": "plasmid",
+      "plasmid_name": "pSul",
+      "color": "#0891b2",
+      "mechanism": "Sulfonamide-resistant dihydropteroate synthase",
+      "drugs_defeated": [
+        "trimethoprim/sulfamethoxazole"
+      ],
+      "spreadable": true,
+      "description": "sul2 encodes an alternative dihydropteroate synthase with low affinity for sulfonamide drugs. Combined with trimethoprim resistance genes, it confers complete resistance to the synergistic TMP/SMX combination."
+    },
+    {
+      "gene_id": "QnrS1",
+      "position_start": 959791,
+      "position_end": 961507,
+      "location": "plasmid",
+      "plasmid_name": "pQnr",
+      "color": "#7c3aed",
+      "mechanism": "Quinolone resistance protein",
+      "drugs_defeated": [
+        "ciprofloxacin",
+        "levofloxacin"
+      ],
+      "spreadable": true,
+      "description": "QnrS1 encodes a pentapeptide repeat protein that protects DNA gyrase and topoisomerase IV from fluoroquinolone inhibition. It provides low-level resistance that facilitates selection of higher-level chromosomal mutations."
+    },
+    {
+      "gene_id": "CTX-M-15",
+      "position_start": 829295,
+      "position_end": 830759,
+      "location": "plasmid",
+      "plasmid_name": "pCTX",
+      "color": "#ef4444",
+      "mechanism": "Extended-spectrum \u03b2-lactamase (ESBL)",
+      "drugs_defeated": [
+        "ceftriaxone",
+        "ceftazidime",
+        "ampicillin"
+      ],
+      "spreadable": true,
+      "description": "CTX-M-15 is the most globally prevalent ESBL. It confers resistance to 3rd-generation cephalosporins and is frequently carried on highly mobile IncF plasmids, facilitating rapid spread in healthcare settings."
+    }
+  ]
 }
