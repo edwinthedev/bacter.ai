@@ -1,0 +1,17 @@
+training/data/
+*.npy
+*.fasta
+models/*.json
+models/*.pkl
+!models/metrics.json
+__pycache__/
+*.pyc
+venv/
+*.egg-info/
+node_modules/
+frontend/dist/
+frontend/.vite/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
