@@ -1,0 +1,82 @@
+[
+  {
+    "kmer": "CTGGTC",
+    "importance": 0.3019213378429413
+  },
+  {
+    "kmer": "CCGGTA",
+    "importance": 0.2717227339744568
+  },
+  {
+    "kmer": "AGATGT",
+    "importance": 0.25979310274124146
+  },
+  {
+    "kmer": "CGGTCC",
+    "importance": 0.24319520592689514
+  },
+  {
+    "kmer": "GACATC",
+    "importance": 0.1950719952583313
+  },
+  {
+    "kmer": "CGACTT",
+    "importance": 0.17922991514205933
+  },
+  {
+    "kmer": "ACCGAA",
+    "importance": 0.16182854771614075
+  },
+  {
+    "kmer": "CGGCCA",
+    "importance": 0.15860474109649658
+  },
+  {
+    "kmer": "ACCATT",
+    "importance": 0.15672412514686584
+  },
+  {
+    "kmer": "GCTGCA",
+    "importance": 0.14044636487960815
+  },
+  {
+    "kmer": "GTCAAT",
+    "importance": 0.12836304306983948
+  },
+  {
+    "kmer": "ATCAGA",
+    "importance": 0.11346305161714554
+  },
+  {
+    "kmer": "GTCACG",
+    "importance": 0.10902052372694016
+  },
+  {
+    "kmer": "TCGAAC",
+    "importance": 0.10608726739883423
+  },
+  {
+    "kmer": "GTCTCT",
+    "importance": 0.10096296668052673
+  },
+  {
+    "kmer": "CCTGAG",
+    "importance": 0.09767773002386093
+  },
+  {
+    "kmer": "TGGAAA",
+    "importance": 0.0916186198592186
+  },
+  {
+    "kmer": "CCAATC",
+    "importance": 0.08227523416280746
+  },
+  {
+    "kmer": "CCCGGT",
+    "importance": 0.07793940603733063
+  },
+  {
+    "kmer": "TTCAGA",
+    "importance": 0.07736483961343765
+  }
+]
