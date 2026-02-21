@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --navy-base: #1a1e2d;
+  --navy-hover: #262c40;
+  --glass-white: #ffffff;
+  --glass-shade: #f0f2f5;
+  --rib-color: rgba(26, 30, 45, 0.04);
+  --bg-page: #f8f9fa;
+  --text-main: #1a1e2d;
+  --text-sub: #6c757d;
+  --border-hairline: rgba(26, 30, 45, 0.1);
+  --c-susceptible: #2ecc71;
+  --c-intermediate: #f1c40f;
+  --c-resistant: #e74c3c;
+  --c-plasmid: #9b59b6;
+  --c-gc-track: #3498db;
+  --radius-lg: 24px;
+  --radius-sm: 8px;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+  --shadow-glass: 0 8px 32px rgba(26, 30, 45, 0.04);
+  --shadow-float: 0 4px 12px rgba(26, 30, 45, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  background-image: repeating-linear-gradient(
+    90deg, transparent, transparent 39px, var(--rib-color) 40px
+  );
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
