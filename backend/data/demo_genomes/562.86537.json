@@ -1,0 +1,297 @@
+{
+  "genome_id": "562.86537",
+  "genome_name": "E. coli strain 86537",
+  "organism": "Escherichia coli",
+  "predictions": [
+    {
+      "antibiotic": "ampicillin",
+      "prediction": "Resistant",
+      "confidence": 0.8159,
+      "resistant_probability": 0.8159,
+      "known_label": "Resistant",
+      "model_accuracy": 0.5,
+      "model_f1": 0.5385,
+      "top_kmers": [
+        {
+          "kmer": "TAAAGC",
+          "importance": 0.6367406249046326
+        },
+        {
+          "kmer": "TCTCGC",
+          "importance": 0.5884250402450562
+        },
+        {
+          "kmer": "AGTGCC",
+          "importance": 0.3206709623336792
+        },
+        {
+          "kmer": "TACCCG",
+          "importance": 0.18395525217056274
+        },
+        {
+          "kmer": "CGGCTT",
+          "importance": 0.1725369244813919
+        }
+      ]
+    },
+    {
+      "antibiotic": "ciprofloxacin",
+      "prediction": "Susceptible",
+      "confidence": 0.9358,
+      "resistant_probability": 0.0642,
+      "known_label": null,
+      "model_accuracy": 0.5833,
+      "model_f1": 0.2105,
+      "top_kmers": [
+        {
+          "kmer": "CACACA",
+          "importance": 1.0775885581970215
+        },
+        {
+          "kmer": "TTCTGC",
+          "importance": 0.74237060546875
+        },
+        {
+          "kmer": "AGATAG",
+          "importance": 0.30027011036872864
+        },
+        {
+          "kmer": "ATACTA",
+          "importance": 0.2896399199962616
+        },
+        {
+          "kmer": "AGAATC",
+          "importance": 0.2753796875476837
+        }
+      ]
+    },
+    {
+      "antibiotic": "ceftriaxone",
+      "prediction": "Resistant",
+      "confidence": 0.5838,
+      "resistant_probability": 0.5838,
+      "known_label": null,
+      "model_accuracy": 0.6098,
+      "model_f1": 0.6364,
+      "top_kmers": [
+        {
+          "kmer": "AGCGCT",
+          "importance": 0.6444205641746521
+        },
+        {
+          "kmer": "AGCAAT",
+          "importance": 0.5930737853050232
+        },
+        {
+          "kmer": "TTCGAA",
+          "importance": 0.527782142162323
+        },
+        {
+          "kmer": "TCTCCC",
+          "importance": 0.37088263034820557
+        },
+        {
+          "kmer": "CCCGCT",
+          "importance": 0.2276962846517563
+        }
+      ]
+    },
+    {
+      "antibiotic": "gentamicin",
+      "prediction": "Susceptible",
+      "confidence": 0.5499,
+      "resistant_probability": 0.4501,
+      "known_label": null,
+      "model_accuracy": 0.7368,
+      "model_f1": 0.2857,
+      "top_kmers": [
+        {
+          "kmer": "TAGATG",
+          "importance": 1.6947742700576782
+        },
+        {
+          "kmer": "GACCCA",
+          "importance": 0.5022141933441162
+        },
+        {
+          "kmer": "CTAAGG",
+          "importance": 0.347743421792984
+        },
+        {
+          "kmer": "CAACTC",
+          "importance": 0.26466214656829834
+        },
+        {
+          "kmer": "GCCGTA",
+          "importance": 0.26019254326820374
+        }
+      ]
+    },
+    {
+      "antibiotic": "meropenem",
+      "prediction": "No model",
+      "confidence": 0,
+      "known_label": "Susceptible"
+    },
+    {
+      "antibiotic": "trimethoprim/sulfamethoxazole",
+      "prediction": "Susceptible",
+      "confidence": 0.613,
+      "resistant_probability": 0.387,
+      "known_label": null,
+      "model_accuracy": 0.5385,
+      "model_f1": 0.6667,
+      "top_kmers": [
+        {
+          "kmer": "AATAAC",
+          "importance": 0.40046194195747375
+        },
+        {
+          "kmer": "GAATTC",
+          "importance": 0.39315029978752136
+        },
+        {
+          "kmer": "ACAATA",
+          "importance": 0.3113114833831787
+        },
+        {
+          "kmer": "GGTGTA",
+          "importance": 0.2791679799556732
+        },
+        {
+          "kmer": "GTGCCC",
+          "importance": 0.26932084560394287
+        }
+      ]
+    },
+    {
+      "antibiotic": "ceftazidime",
+      "prediction": "Resistant",
+      "confidence": 0.6191,
+      "resistant_probability": 0.6191,
+      "known_label": null,
+      "model_accuracy": 0.6129,
+      "model_f1": 0.1429,
+      "top_kmers": [
+        {
+          "kmer": "TGTCGT",
+          "importance": 1.0535746812820435
+        },
+        {
+          "kmer": "GCATGA",
+          "importance": 0.9639589786529541
+        },
+        {
+          "kmer": "CACCAT",
+          "importance": 0.3890078365802765
+        },
+        {
+          "kmer": "CGGTAA",
+          "importance": 0.30475914478302
+        },
+        {
+          "kmer": "TAACGG",
+          "importance": 0.19848836958408356
+        }
+      ]
+    },
+    {
+      "antibiotic": "tetracycline",
+      "prediction": "Susceptible",
+      "confidence": 0.5112,
+      "resistant_probability": 0.4888,
+      "known_label": null,
+      "model_accuracy": 0.5,
+      "model_f1": 0.4118,
+      "top_kmers": [
+        {
+          "kmer": "TGTAGC",
+          "importance": 0.8399869203567505
+        },
+        {
+          "kmer": "CTCCAA",
+          "importance": 0.7725232243537903
+        },
+        {
+          "kmer": "TTAAGA",
+          "importance": 0.3075578808784485
+        },
+        {
+          "kmer": "TAACCG",
+          "importance": 0.21300895512104034
+        },
+        {
+          "kmer": "CTCGAA",
+          "importance": 0.2018372267484665
+        }
+      ]
+    },
+    {
+      "antibiotic": "chloramphenicol",
+      "prediction": "Resistant",
+      "confidence": 0.5227,
+      "resistant_probability": 0.5227,
+      "known_label": null,
+      "model_accuracy": 0.6471,
+      "model_f1": 0.0,
+      "top_kmers": [
+        {
+          "kmer": "GAGTCA",
+          "importance": 0.5154163241386414
+        },
+        {
+          "kmer": "CCATTG",
+          "importance": 0.5146161913871765
+        },
+        {
+          "kmer": "ATTCGG",
+          "importance": 0.5138184428215027
+        },
+        {
+          "kmer": "TGAGAC",
+          "importance": 0.460393488407135
+        },
+        {
+          "kmer": "AGCATG",
+          "importance": 0.4599073529243469
+        }
+      ]
+    },
+    {
+      "antibiotic": "levofloxacin",
+      "prediction": "Resistant",
+      "confidence": 0.7512,
+      "resistant_probability": 0.7512,
+      "known_label": null,
+      "model_accuracy": 0.6129,
+      "model_f1": 0.6471,
+      "top_kmers": [
+        {
+          "kmer": "CTTGGC",
+          "importance": 0.623234212398529
+        },
+        {
+          "kmer": "CCACCG",
+          "importance": 0.6224618554115295
+        },
+        {
+          "kmer": "CACTTC",
+          "importance": 0.6118139624595642
+        },
+        {
+          "kmer": "TTTCTA",
+          "importance": 0.19414283335208893
+        },
+        {
+          "kmer": "GTAGGC",
+          "importance": 0.1377299576997757
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_antibiotics": 10,
+    "resistant_count": 5,
+    "susceptible_count": 4
+  }
+}

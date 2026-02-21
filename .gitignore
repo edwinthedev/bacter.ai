@@ -1,8 +1,10 @@
-training/data/
+training/data/*
+!training/data/download_fastas.py
 *.npy
 *.fasta
 models/*.json
 models/*.pkl
+models/*.joblib
 !models/metrics.json
 __pycache__/
 *.pyc
