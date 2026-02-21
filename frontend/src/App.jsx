@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
+import MechanismDiagrams from './components/MechanismDiagrams';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const getAntibioticClass = (drug) => ({
@@ -441,7 +442,9 @@ const ResultsView = ({ pathogen, results, fileName }) => {
             resistanceGenes={results.resistance_genes}
           />
         )}
-        {activeTab === 'Mechanisms'      && <TabMechanisms results={results} />}
+        {activeTab === 'Mechanisms' && (
+          <MechanismDiagrams resistanceGenes={results.resistance_genes} />
+        )}
         {activeTab === 'Recommendations' && (
           <div style={{ maxWidth: 640 }}>
             <div style={{ marginBottom: 40 }}>
