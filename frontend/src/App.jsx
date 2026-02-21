@@ -128,10 +128,17 @@ function App() {
         bacter.ai
         {page !== 'select' && (
           <button onClick={handleBack} style={{
-            marginLeft: 'auto', background: 'none', border: '1px solid var(--border-hairline)',
-            borderRadius: 6, padding: '4px 12px', cursor: 'pointer',
-            color: 'var(--text-sub)', fontSize: '0.75rem', fontFamily: 'var(--font-mono)',
-            letterSpacing: '0.05em'
+            marginLeft: 'auto',
+            background: 'var(--navy-base)',
+            border: 'none',
+            borderRadius: 8,
+            padding: '10px 20px',
+            cursor: 'pointer',
+            color: 'white',
+            fontSize: '0.85rem',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 700,
+            letterSpacing: '0.08em',
           }}>← BACK</button>
         )}
       </div>
