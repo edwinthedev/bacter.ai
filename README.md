@@ -1,2 +1,2 @@
-# SpeakEarly
-50% of Alzheimer's patients go undiagnosed. SpeakEarly changes that — a browser-based tool that analyzes speech biomarkers using ML and clinical audio processing to screen for cognitive decline from any device with a microphone, in under 60 seconds.
+#bacter.ai
+Antimicrobial resistance (AMR) is what the WHO calls the "silent pandemic" — 1.27 million deaths per year, projected to kill 10 million/year by 2050. When a patient has a bacterial infection, doctors currently wait 2-3 days for a culture to determine which antibiotics will work. During that wait, they guess. Often wrong. Patients die.
