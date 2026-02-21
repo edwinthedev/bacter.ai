@@ -3,6 +3,7 @@ import axios from 'axios';
 import BacteriaSelector from './components/BacteriaSelector';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
+import ClinicalRecommendation from './components/ClinicalRecommendation';
 
 const getAntibioticClass = (drug) => {
   const classes = {
@@ -282,6 +283,14 @@ function App() {
                   genomeData={analysisResults.genome_data}
                   resistanceGenes={analysisResults.resistance_genes}
                   onGeneClick={setActiveGene}
+                />
+              </div>
+
+              {/* Clinical Recommendation — below the grid */}
+              <div style={{ marginTop: '2rem' }}>
+                <ClinicalRecommendation
+                  predictions={analysisResults.predictions}
+                  resistanceGenes={analysisResults.resistance_genes}
                 />
               </div>
             </>
