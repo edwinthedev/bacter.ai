@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 
-// ─── Mock data (replace with real API data later) ───────────────────────────
 const MOCK_GENOME = {
   chromosome: { length: 5200000 },
   gc_content_windows: Array.from({ length: 120 }, (_, i) => ({
@@ -22,8 +21,7 @@ const MOCK_GENES = [
     mechanism: 'Metallo-β-lactamase',
     drugs_defeated: ['meropenem', 'imipenem', 'ampicillin', 'ceftriaxone'],
     spreadable: true,
-    description:
-      'NDM-1 is a metallo-β-lactamase enzyme that destroys virtually all β-lactam antibiotics, including last-resort carbapenems. It does this by using a zinc ion to break the β-lactam ring. It was first identified in New Delhi in 2008 and has since spread globally on mobile plasmids.',
+    description: 'NDM-1 is a metallo-β-lactamase enzyme that destroys virtually all β-lactam antibiotics, including last-resort carbapenems. First identified in New Delhi in 2008, it has spread globally on mobile plasmids.',
   },
   {
     gene_id: 'TEM-1',
@@ -34,11 +32,10 @@ const MOCK_GENES = [
     mechanism: 'β-Lactamase',
     drugs_defeated: ['ampicillin', 'amoxicillin/clavulanic acid'],
     spreadable: false,
-    description:
-      'TEM-1 is one of the most common β-lactamase enzymes found in E. coli. It hydrolyzes ampicillin and related penicillins, rendering them ineffective. It is encoded on the chromosome and not easily spread to other bacteria.',
+    description: 'TEM-1 is one of the most common β-lactamase enzymes found in E. coli. It hydrolyzes ampicillin and related penicillins, rendering them ineffective.',
   },
   {
-    gene_id: 'AAC(6\')-Ib-cr',
+    gene_id: "AAC(6')-Ib",
     position_start: 2300000,
     position_end: 2301200,
     location: 'chromosome',
@@ -46,8 +43,7 @@ const MOCK_GENES = [
     mechanism: 'Aminoglycoside acetyltransferase',
     drugs_defeated: ['ciprofloxacin', 'gentamicin'],
     spreadable: false,
-    description:
-      'This variant of AAC(6\')-Ib acetylates both aminoglycosides and fluoroquinolones. It reduces the effectiveness of ciprofloxacin by chemically modifying the drug before it can inhibit bacterial DNA replication.',
+    description: "This variant of AAC(6')-Ib acetylates both aminoglycosides and fluoroquinolones, reducing the effectiveness of ciprofloxacin.",
   },
   {
     gene_id: 'QnrS1',
@@ -59,8 +55,7 @@ const MOCK_GENES = [
     mechanism: 'Quinolone protection protein',
     drugs_defeated: ['ciprofloxacin'],
     spreadable: true,
-    description:
-      'QnrS1 is a plasmid-mediated quinolone resistance protein that protects bacterial DNA gyrase and topoisomerase IV from fluoroquinolone inhibition. It alone confers only low-level resistance but synergizes dangerously with other quinolone resistance mechanisms.',
+    description: 'QnrS1 protects bacterial DNA gyrase from fluoroquinolone inhibition. It synergizes dangerously with other quinolone resistance mechanisms.',
   },
   {
     gene_id: 'Sul2',
@@ -71,11 +66,92 @@ const MOCK_GENES = [
     mechanism: 'Dihydropteroate synthase variant',
     drugs_defeated: ['trimethoprim/sulfamethoxazole'],
     spreadable: false,
-    description:
-      'Sul2 encodes a variant dihydropteroate synthase enzyme that has low affinity for sulfonamide drugs. This allows the bacterium to continue producing folate — essential for DNA synthesis — even in the presence of sulfonamide antibiotics.',
+    description: 'Sul2 encodes a variant enzyme with low affinity for sulfonamide drugs, allowing the bacterium to continue producing folate even in the presence of sulfonamide antibiotics.',
   },
 ];
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Pentagon radar chart for resistance profile
+const ResistanceRadar = ({ genes }) => {
+  const axes = [
+    { label: 'β-Lactams', key: 'betalactam' },
+    { label: 'Fluoroquinolones', key: 'fluoroquinolone' },
+    { label: 'Aminoglycosides', key: 'aminoglycoside' },
+    { label: 'Carbapenems', key: 'carbapenem' },
+    { label: 'Sulfonamides', key: 'sulfonamide' },
+  ];
+
+  const drugMap = {
+    betalactam: ['ampicillin', 'amoxicillin/clavulanic acid', 'ceftriaxone', 'ceftazidime'],
+    fluoroquinolone: ['ciprofloxacin'],
+    aminoglycoside: ['gentamicin', 'amikacin'],
+    carbapenem: ['meropenem', 'imipenem'],
+    sulfonamide: ['trimethoprim/sulfamethoxazole'],
+  };
+
+  const allDefeated = genes.flatMap(g => g.drugs_defeated || []);
+
+  const scores = axes.map(axis => {
+    const drugs = drugMap[axis.key];
+    const hits = drugs.filter(d => allDefeated.includes(d)).length;
+    return Math.min(hits / drugs.length, 1);
+  });
+
+  const W = 200, H = 200;
+  const cx = W / 2, cy = H / 2;
+  const maxR = 70;
+  const n = axes.length;
+
+  const getPoint = (i, r) => {
+    const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
+    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+  };
+
+  const gridLevels = [0.25, 0.5, 0.75, 1.0];
+  const radarPoints = scores.map((s, i) => getPoint(i, s * maxR));
+  const radarPath = radarPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ') + 'Z';
+
+  return (
+    <svg width={W} height={H} style={{ display: 'block', margin: '0 auto' }}>
+      {/* Grid pentagons */}
+      {gridLevels.map(level => {
+        const pts = Array.from({ length: n }, (_, i) => getPoint(i, level * maxR));
+        const path = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ') + 'Z';
+        return (
+          <path key={level} d={path} fill="none"
+            stroke="#334155" strokeWidth={0.8} opacity={0.5} />
+        );
+      })}
+
+      {/* Axis lines */}
+      {axes.map((_, i) => {
+        const [x, y] = getPoint(i, maxR);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y}
+          stroke="#334155" strokeWidth={0.8} opacity={0.5} />;
+      })}
+
+      {/* Filled radar */}
+      <path d={radarPath} fill="#ef4444" opacity={0.25} />
+      <path d={radarPath} fill="none" stroke="#ef4444" strokeWidth={2} opacity={0.8} />
+
+      {/* Score dots */}
+      {radarPoints.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={3} fill="#ef4444" opacity={0.9} />
+      ))}
+
+      {/* Labels */}
+      {axes.map((axis, i) => {
+        const [x, y] = getPoint(i, maxR + 16);
+        return (
+          <text key={i} x={x} y={y}
+            textAnchor="middle" dominantBaseline="middle"
+            fill="#94a3b8" fontSize="8px" fontFamily="monospace">
+            {axis.label}
+          </text>
+        );
+      })}
+    </svg>
+  );
+};
 
 const CircularGenomePlot = ({
   genomeData = MOCK_GENOME,
@@ -83,7 +159,6 @@ const CircularGenomePlot = ({
   onGeneClick,
 }) => {
   const svgRef = useRef(null);
-  const [hoveredGene, setHoveredGene] = useState(null);
   const [activeGene, setActiveGene] = useState(null);
 
   const handleGeneClick = (gene) => {
@@ -97,15 +172,15 @@ const CircularGenomePlot = ({
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const W = 600;
-    const H = 600;
-    const cx = W / 2;
-    const cy = H / 2;
+    const W = 560, H = 560;
+    const cx = W / 2, cy = H / 2;
 
-    const R_OUTER    = 228;
-    const R_BACKBONE = 200;
-    const R_GC       = 155;
-    const R_INNER    = 125;
+    // Ring radii — DNA is the OUTERMOST ring
+    const R_DNA_OUTER = 240;   // outer edge of DNA ring
+    const R_DNA_INNER = 224;   // inner edge of DNA ring
+    const R_GENE      = 218;   // resistance gene arcs (just inside DNA)
+    const R_GC_BASE   = 170;   // GC content track
+    const R_INNER     = 110;   // inner fill
 
     const root = svg
       .attr('viewBox', `0 0 ${W} ${H}`)
@@ -113,179 +188,149 @@ const CircularGenomePlot = ({
       .attr('transform', `translate(${cx},${cy})`);
 
     const genomeLength = genomeData.chromosome.length;
-
     const angle = d3.scaleLinear()
       .domain([0, genomeLength])
       .range([0, 2 * Math.PI]);
 
-    // ── Background glow ────────────────────────────────────────────────────
+    // Defs
     const defs = svg.append('defs');
-
-    const radialGrad = defs.append('radialGradient')
-      .attr('id', 'bg-glow')
-      .attr('cx', '50%').attr('cy', '50%').attr('r', '50%');
-    radialGrad.append('stop').attr('offset', '0%').attr('stop-color', '#0f172a').attr('stop-opacity', 1);
-    radialGrad.append('stop').attr('offset', '100%').attr('stop-color', '#020617').attr('stop-opacity', 1);
-
     svg.insert('rect', ':first-child')
       .attr('width', W).attr('height', H)
-      .attr('fill', 'url(#bg-glow)')
-      .attr('rx', 16);
+      .attr('fill', '#020617').attr('rx', 16);
 
-    // Glow filter for gene arcs
-    const filter = defs.append('filter').attr('id', 'gene-glow');
-    filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur');
-    filter.append('feComposite').attr('in', 'SourceGraphic').attr('in2', 'blur').attr('operator', 'over');
+    const geneGlow = defs.append('filter').attr('id', 'gene-glow2');
+    geneGlow.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
+    const merge = geneGlow.append('feMerge');
+    merge.append('feMergeNode').attr('in', 'blur');
+    merge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // ── Inner fill ─────────────────────────────────────────────────────────
-    root.append('circle')
-      .attr('r', R_INNER)
-      .attr('fill', '#0f172a')
-      .attr('opacity', 0.6);
+    // Inner dark fill
+    root.append('circle').attr('r', R_INNER)
+      .attr('fill', '#0a0f1e').attr('opacity', 0.9);
 
-    // ── GC content track ───────────────────────────────────────────────────
+    // ── GC content track ──────────────────────────────────────────
     if (genomeData.gc_content_windows?.length) {
-      const gcVals = genomeData.gc_content_windows.map((w) => w.gc);
-      const avgGC  = d3.mean(gcVals);
-      const gcExt  = d3.max(gcVals.map((v) => Math.abs(v - avgGC)));
-
+      const gcVals = genomeData.gc_content_windows.map(w => w.gc);
+      const avgGC = d3.mean(gcVals);
+      const gcExt = d3.max(gcVals.map(v => Math.abs(v - avgGC)));
       const gcR = d3.scaleLinear()
         .domain([avgGC - gcExt, avgGC + gcExt])
-        .range([R_GC - 22, R_GC + 22]);
+        .range([R_GC_BASE - 28, R_GC_BASE + 28]);
 
-      // Reference band
-      root.append('circle')
-        .attr('r', R_GC)
-        .attr('fill', 'none')
-        .attr('stroke', '#1e40af')
-        .attr('stroke-width', 44)
-        .attr('opacity', 0.07);
+      // GC band background
+      root.append('circle').attr('r', R_GC_BASE)
+        .attr('fill', 'none').attr('stroke', '#1e3a5f')
+        .attr('stroke-width', 56).attr('opacity', 0.12);
 
       const gcPath = d3.lineRadial()
-        .angle((d) => angle((d.start + d.end) / 2))
-        .radius((d) => gcR(d.gc))
+        .angle(d => angle((d.start + d.end) / 2))
+        .radius(d => gcR(d.gc))
         .curve(d3.curveCatmullRomClosed);
 
       root.append('path')
         .datum([...genomeData.gc_content_windows, genomeData.gc_content_windows[0]])
         .attr('d', gcPath)
-        .attr('fill', 'none')
-        .attr('stroke', '#38bdf8')
-        .attr('stroke-width', 1.2)
-        .attr('opacity', 0)
-        .transition().duration(1200).delay(600)
-        .attr('opacity', 0.55);
+        .attr('fill', 'none').attr('stroke', '#38bdf8')
+        .attr('stroke-width', 1.5).attr('opacity', 0)
+        .transition().duration(1400).delay(500)
+        .attr('opacity', 0.5);
 
-      // Avg GC dashed ring
-      root.append('circle')
-        .attr('r', R_GC)
-        .attr('fill', 'none')
-        .attr('stroke', '#38bdf8')
-        .attr('stroke-width', 0.5)
-        .attr('stroke-dasharray', '3,6')
-        .attr('opacity', 0.25);
+      root.append('circle').attr('r', R_GC_BASE)
+        .attr('fill', 'none').attr('stroke', '#38bdf8')
+        .attr('stroke-width', 0.5).attr('stroke-dasharray', '2,5')
+        .attr('opacity', 0.2);
     }
 
-    // ── Chromosome backbone ────────────────────────────────────────────────
-    // Subtle segmented ring
-    const segCount = 100;
+    // ── DNA outer ring (segmented) ─────────────────────────────────
+    const segCount = 120;
     for (let i = 0; i < segCount; i++) {
       const a0 = (i / segCount) * 2 * Math.PI - Math.PI / 2;
-      const a1 = ((i + 0.85) / segCount) * 2 * Math.PI - Math.PI / 2;
+      const a1 = ((i + 0.88) / segCount) * 2 * Math.PI - Math.PI / 2;
       const arc = d3.arc()
-        .innerRadius(R_BACKBONE - 4)
-        .outerRadius(R_BACKBONE + 4)
+        .innerRadius(R_DNA_INNER)
+        .outerRadius(R_DNA_OUTER)
         .startAngle(a0 + Math.PI / 2)
         .endAngle(a1 + Math.PI / 2);
 
-      root.append('path')
-        .attr('d', arc)
-        .attr('fill', '#334155')
-        .attr('opacity', 0)
-        .transition().duration(800).delay(i * 6)
-        .attr('opacity', 0.8);
+      root.append('path').attr('d', arc)
+        .attr('fill', '#1e293b').attr('opacity', 0)
+        .transition().duration(600).delay(i * 4)
+        .attr('opacity', 0.9);
     }
 
-    // ── Mb tick marks ──────────────────────────────────────────────────────
-    const tickInterval = 1000000;
-    for (let pos = 0; pos < genomeLength; pos += tickInterval) {
+    // Outer glow ring
+    root.append('circle').attr('r', R_DNA_OUTER + 2)
+      .attr('fill', 'none').attr('stroke', '#38bdf8')
+      .attr('stroke-width', 1).attr('opacity', 0.15);
+
+    // ── Mb tick marks ──────────────────────────────────────────────
+    for (let pos = 0; pos < genomeLength; pos += 1000000) {
       const a = angle(pos) - Math.PI / 2;
-      const iR = R_BACKBONE - 12;
-      const oR = R_BACKBONE + 14;
-
       root.append('line')
-        .attr('x1', iR * Math.cos(a)).attr('y1', iR * Math.sin(a))
-        .attr('x2', oR * Math.cos(a)).attr('y2', oR * Math.sin(a))
-        .attr('stroke', '#64748b')
-        .attr('stroke-width', 1.5)
-        .attr('opacity', 0.7);
+        .attr('x1', (R_DNA_INNER - 4) * Math.cos(a))
+        .attr('y1', (R_DNA_INNER - 4) * Math.sin(a))
+        .attr('x2', (R_DNA_OUTER + 8) * Math.cos(a))
+        .attr('y2', (R_DNA_OUTER + 8) * Math.sin(a))
+        .attr('stroke', '#64748b').attr('stroke-width', 1.5).attr('opacity', 0.6);
 
-      const lR = R_BACKBONE + 24;
       root.append('text')
-        .attr('x', lR * Math.cos(a)).attr('y', lR * Math.sin(a))
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle')
-        .attr('fill', '#64748b')
-        .attr('font-size', '9px')
+        .attr('x', (R_DNA_OUTER + 18) * Math.cos(a))
+        .attr('y', (R_DNA_OUTER + 18) * Math.sin(a))
+        .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+        .attr('fill', '#475569').attr('font-size', '8px')
         .attr('font-family', 'monospace')
         .text(`${pos / 1000000}Mb`);
     }
 
-    // ── Chromosome gene arcs ───────────────────────────────────────────────
-    const chromGenes = (resistanceGenes || []).filter((g) => g.location !== 'plasmid');
+    // ── Resistance gene arcs ON the DNA ring ───────────────────────
+    const chromGenes = (resistanceGenes || []).filter(g => g.location !== 'plasmid');
 
     chromGenes.forEach((gene, i) => {
       const sa = angle(gene.position_start) - Math.PI / 2;
-      const ea = Math.max(
-        angle(gene.position_end) - Math.PI / 2,
-        sa + 0.045
-      );
+      const ea = Math.max(angle(gene.position_end) - Math.PI / 2, sa + 0.06);
 
+      // Gene arc sits ON the DNA ring
       const arc = d3.arc()
-        .innerRadius(R_OUTER - 16)
-        .outerRadius(R_OUTER)
+        .innerRadius(R_DNA_INNER - 1)
+        .outerRadius(R_DNA_OUTER + 1)
         .startAngle(sa + Math.PI / 2)
         .endAngle(ea + Math.PI / 2);
 
       const gGroup = root.append('g')
         .style('cursor', 'pointer')
         .on('mouseenter', function () {
-          setHoveredGene(gene.gene_id);
           d3.select(this).select('path')
             .transition().duration(150)
             .attr('opacity', 1)
-            .attr('filter', 'url(#gene-glow)');
+            .attr('filter', 'url(#gene-glow2)');
         })
         .on('mouseleave', function () {
-          setHoveredGene(null);
           d3.select(this).select('path')
             .transition().duration(150)
-            .attr('opacity', 0.85)
+            .attr('opacity', 0.9)
             .attr('filter', null);
         })
         .on('click', () => handleGeneClick(gene));
 
-      gGroup.append('path')
-        .attr('d', arc)
+      gGroup.append('path').attr('d', arc)
         .attr('fill', gene.color || '#ef4444')
         .attr('opacity', 0)
-        .transition().delay(1400 + i * 180).duration(500)
-        .attr('opacity', 0.85);
+        .transition().delay(700 + i * 200).duration(500)
+        .attr('opacity', 0.9);
 
-      // Leader line + label
+      // Label line pointing inward
       const mid = (sa + ea) / 2;
-      const lineStart = R_OUTER + 3;
-      const lineEnd   = R_OUTER + 18;
-      const labelR    = R_OUTER + 22;
+      const lineInnerR = R_DNA_INNER - 12;
+      const lineOuterR = R_DNA_INNER - 2;
+      const labelR = R_DNA_INNER - 24;
 
       gGroup.append('line')
-        .attr('x1', lineStart * Math.cos(mid)).attr('y1', lineStart * Math.sin(mid))
-        .attr('x2', lineEnd   * Math.cos(mid)).attr('y2', lineEnd   * Math.sin(mid))
-        .attr('stroke', gene.color || '#ef4444')
-        .attr('stroke-width', 1)
+        .attr('x1', lineOuterR * Math.cos(mid)).attr('y1', lineOuterR * Math.sin(mid))
+        .attr('x2', lineInnerR * Math.cos(mid)).attr('y2', lineInnerR * Math.sin(mid))
+        .attr('stroke', gene.color).attr('stroke-width', 1)
         .attr('opacity', 0)
-        .transition().delay(1700 + i * 180).duration(300)
-        .attr('opacity', 0.6);
+        .transition().delay(900 + i * 200).duration(300)
+        .attr('opacity', 0.7);
 
       const isLeft = mid > Math.PI / 2 && mid < (3 * Math.PI) / 2;
       gGroup.append('text')
@@ -293,126 +338,116 @@ const CircularGenomePlot = ({
         .attr('y', labelR * Math.sin(mid))
         .attr('text-anchor', isLeft ? 'end' : 'start')
         .attr('dominant-baseline', 'middle')
-        .attr('fill', gene.color || '#ef4444')
-        .attr('font-size', '11px')
-        .attr('font-weight', '700')
-        .attr('font-family', 'monospace')
+        .attr('fill', gene.color).attr('font-size', '10px')
+        .attr('font-weight', '700').attr('font-family', 'monospace')
         .text(gene.gene_id)
         .attr('opacity', 0)
-        .transition().delay(1900 + i * 180).duration(300)
+        .transition().delay(1000 + i * 200).duration(300)
         .attr('opacity', 1);
     });
 
-    // ── Plasmid circles ────────────────────────────────────────────────────
-    const plasmidGenes = (resistanceGenes || []).filter((g) => g.location === 'plasmid');
-    const plasmidNames = [...new Set(plasmidGenes.map((g) => g.plasmid_name))];
+    // ── Plasmid circles positioned around the main ring ───────────
+    const plasmidGenes = (resistanceGenes || []).filter(g => g.location === 'plasmid');
+    const plasmidNames = [...new Set(plasmidGenes.map(g => g.plasmid_name))];
 
     plasmidNames.forEach((pName, pIdx) => {
-      const pGenes = plasmidGenes.filter((g) => g.plasmid_name === pName);
-      const pR  = 48;
-      const pCx = -160 + pIdx * 150;
-      const pCy = 185;
+      const pGenes = plasmidGenes.filter(g => g.plasmid_name === pName);
+      const pR = 42;
+
+      // Position plasmids OUTSIDE the main ring, evenly spaced
+      const placementAngle = (pIdx / Math.max(plasmidNames.length, 1)) * 2 * Math.PI + Math.PI / 4;
+      const pDist = R_DNA_OUTER + 55;
+      const pCx = pDist * Math.cos(placementAngle);
+      const pCy = pDist * Math.sin(placementAngle);
+
+      // Connector line from main ring to plasmid
+      const connStart = (R_DNA_OUTER + 4);
+      root.append('line')
+        .attr('x1', connStart * Math.cos(placementAngle))
+        .attr('y1', connStart * Math.sin(placementAngle))
+        .attr('x2', pCx - pR * Math.cos(placementAngle))
+        .attr('y2', pCy - pR * Math.sin(placementAngle))
+        .attr('stroke', '#475569').attr('stroke-width', 1)
+        .attr('stroke-dasharray', '3,3').attr('opacity', 0)
+        .transition().delay(1800).duration(400)
+        .attr('opacity', 0.5);
 
       const pGroup = root.append('g')
         .attr('transform', `translate(${pCx},${pCy})`);
 
-      // Dashed backbone
-      pGroup.append('circle')
-        .attr('r', pR)
-        .attr('fill', '#0f172a')
-        .attr('stroke', '#475569')
-        .attr('stroke-width', 2.5)
-        .attr('stroke-dasharray', '5,4')
+      // Plasmid backbone
+      pGroup.append('circle').attr('r', pR)
+        .attr('fill', '#0f172a').attr('stroke', '#7c3aed')
+        .attr('stroke-width', 2).attr('stroke-dasharray', '4,3')
         .attr('opacity', 0)
-        .transition().delay(2600).duration(500)
+        .transition().delay(2000).duration(500)
+        .attr('opacity', 0.85);
+
+      // PLASMID label
+      pGroup.append('text').attr('y', -pR - 8)
+        .attr('text-anchor', 'middle').attr('fill', '#7c3aed')
+        .attr('font-size', '7px').attr('font-family', 'monospace')
+        .attr('letter-spacing', '0.1em').text('PLASMID')
+        .attr('opacity', 0)
+        .transition().delay(2200).duration(300)
         .attr('opacity', 0.8);
 
-      // Label
-      pGroup.append('text')
-        .attr('y', pR + 16)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#94a3b8')
-        .attr('font-size', '9px')
-        .attr('font-family', 'monospace')
+      pGroup.append('text').attr('y', pR + 12)
+        .attr('text-anchor', 'middle').attr('fill', '#94a3b8')
+        .attr('font-size', '8px').attr('font-family', 'monospace')
         .text(pName || `Plasmid ${pIdx + 1}`)
         .attr('opacity', 0)
-        .transition().delay(2800).duration(400)
+        .transition().delay(2200).duration(300)
         .attr('opacity', 1);
 
-      // PLASMID label above
-      pGroup.append('text')
-        .attr('y', -pR - 10)
-        .attr('text-anchor', 'middle')
-        .attr('fill', '#64748b')
-        .attr('font-size', '8px')
-        .attr('letter-spacing', '0.1em')
-        .attr('font-family', 'monospace')
-        .text('PLASMID')
-        .attr('opacity', 0)
-        .transition().delay(2800).duration(400)
-        .attr('opacity', 0.7);
-
+      // Gene arcs on plasmid
       pGenes.forEach((gene, gi) => {
         const gAngle = (gi / pGenes.length) * 2 * Math.PI - Math.PI / 2;
         const gArc = d3.arc()
-          .innerRadius(pR - 9)
-          .outerRadius(pR + 3)
+          .innerRadius(pR - 8).outerRadius(pR + 2)
           .startAngle(gAngle + Math.PI / 2)
-          .endAngle(gAngle + Math.PI / 2 + 0.55);
+          .endAngle(gAngle + Math.PI / 2 + 0.6);
 
-        pGroup.append('path')
-          .attr('d', gArc)
+        pGroup.append('path').attr('d', gArc)
           .attr('fill', gene.color || '#ef4444')
           .style('cursor', 'pointer')
           .attr('opacity', 0)
-          .transition().delay(2900 + gi * 120).duration(400)
+          .transition().delay(2400 + gi * 100).duration(400)
           .attr('opacity', 0.9)
           .selection()
           .on('click', () => handleGeneClick(gene))
           .on('mouseenter', function () {
-            d3.select(this).attr('filter', 'url(#gene-glow)').attr('opacity', 1);
+            d3.select(this).attr('filter', 'url(#gene-glow2)').attr('opacity', 1);
           })
           .on('mouseleave', function () {
             d3.select(this).attr('filter', null).attr('opacity', 0.9);
           });
 
-        const lR = pR + 18;
         pGroup.append('text')
-          .attr('x', lR * Math.cos(gAngle))
-          .attr('y', lR * Math.sin(gAngle))
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .attr('fill', gene.color || '#ef4444')
-          .attr('font-size', '9px')
-          .attr('font-weight', '700')
-          .attr('font-family', 'monospace')
+          .attr('x', (pR + 16) * Math.cos(gAngle))
+          .attr('y', (pR + 16) * Math.sin(gAngle))
+          .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+          .attr('fill', gene.color).attr('font-size', '8px')
+          .attr('font-weight', '700').attr('font-family', 'monospace')
           .text(gene.gene_id)
           .attr('opacity', 0)
-          .transition().delay(3100 + gi * 120).duration(300)
+          .transition().delay(2600 + gi * 100).duration(300)
           .attr('opacity', 1);
       });
     });
 
-    // ── Center label ───────────────────────────────────────────────────────
-    root.append('text')
-      .attr('text-anchor', 'middle').attr('y', -18)
-      .attr('fill', '#f1f5f9')
-      .attr('font-size', '16px').attr('font-weight', '800')
-      .attr('font-family', 'monospace')
-      .attr('letter-spacing', '0.05em')
+    // ── Center labels ──────────────────────────────────────────────
+    root.append('text').attr('text-anchor', 'middle').attr('y', -14)
+      .attr('fill', '#f1f5f9').attr('font-size', '15px').attr('font-weight', '800')
+      .attr('font-family', 'monospace').attr('letter-spacing', '0.05em')
       .text('E. coli');
 
-    root.append('text')
-      .attr('text-anchor', 'middle').attr('y', 4)
-      .attr('fill', '#64748b')
-      .attr('font-size', '11px')
-      .attr('font-family', 'monospace')
+    root.append('text').attr('text-anchor', 'middle').attr('y', 6)
+      .attr('fill', '#475569').attr('font-size', '10px').attr('font-family', 'monospace')
       .text(`${(genomeLength / 1000000).toFixed(1)} Mb`);
 
-    root.append('text')
-      .attr('text-anchor', 'middle').attr('y', 22)
-      .attr('fill', '#ef4444')
-      .attr('font-size', '11px').attr('font-weight', '600')
+    root.append('text').attr('text-anchor', 'middle').attr('y', 24)
+      .attr('fill', '#ef4444').attr('font-size', '10px').attr('font-weight', '600')
       .attr('font-family', 'monospace')
       .text(`${resistanceGenes?.length || 0} resistance genes`);
 
@@ -426,50 +461,76 @@ const CircularGenomePlot = ({
           <h2 style={{ color: '#f1f5f9', fontFamily: 'monospace', fontSize: 18, fontWeight: 800, margin: 0, letterSpacing: '0.05em' }}>
             GENOME MAP
           </h2>
-          <p style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 11, margin: '4px 0 0', letterSpacing: '0.05em' }}>
+          <p style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 11, margin: '4px 0 0' }}>
             RESISTANCE GENE LOCALIZATION
           </p>
         </div>
-        {/* Legend */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           {[
-            { color: '#334155', label: 'Chromosome' },
+            { color: '#1e293b', label: 'DNA backbone' },
             { color: '#38bdf8', label: 'GC content' },
             { color: '#ef4444', label: 'Resistance gene' },
+            { color: '#7c3aed', label: 'Plasmid' },
           ].map(({ color, label }) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: 2, background: color, opacity: 0.85 }} />
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: color, border: '1px solid #334155' }} />
               <span style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: 10 }}>{label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* SVG */}
-      <svg ref={svgRef} style={{ width: '100%', maxWidth: 600, display: 'block', margin: '0 auto' }} />
+      {/* Main layout: plot + radar side by side */}
+      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+        <svg ref={svgRef} style={{ flex: 1, maxWidth: 560, display: 'block' }} />
+
+        {/* Resistance radar */}
+        <div style={{ minWidth: 200 }}>
+          <div style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.1em', marginBottom: 8, textAlign: 'center' }}>
+            RESISTANCE PROFILE
+          </div>
+          <ResistanceRadar genes={resistanceGenes || []} />
+          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {(resistanceGenes || []).map(g => (
+              <div key={g.gene_id}
+                onClick={() => handleGeneClick(g)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  cursor: 'pointer', padding: '4px 8px', borderRadius: 6,
+                  background: '#0f172a', border: `1px solid ${g.color}33`,
+                  transition: 'background 0.15s'
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
+                onMouseLeave={e => e.currentTarget.style.background = '#0f172a'}
+              >
+                <div style={{ width: 8, height: 8, borderRadius: 2, background: g.color, flexShrink: 0 }} />
+                <span style={{ color: g.color, fontFamily: 'monospace', fontSize: 10, fontWeight: 700 }}>{g.gene_id}</span>
+                <span style={{ color: '#475569', fontFamily: 'monospace', fontSize: 9, marginLeft: 'auto' }}>
+                  {g.location === 'plasmid' ? '⚠ plasmid' : 'chr'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Gene detail panel */}
       {activeGene && (
         <div style={{
-          marginTop: 16,
-          background: '#0f172a',
+          marginTop: 16, background: '#0f172a',
           border: `1px solid ${activeGene.color}44`,
           borderLeft: `3px solid ${activeGene.color}`,
-          borderRadius: 10,
-          padding: '16px 20px',
-          position: 'relative',
+          borderRadius: 10, padding: '16px 20px', position: 'relative',
         }}>
-          <button
-            onClick={() => setActiveGene(null)}
-            style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}
-          >×</button>
+          <button onClick={() => setActiveGene(null)} style={{
+            position: 'absolute', top: 10, right: 12, background: 'none',
+            border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18
+          }}>×</button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
             <span style={{
-              background: activeGene.color + '22',
-              border: `1px solid ${activeGene.color}55`,
-              color: activeGene.color,
-              fontFamily: 'monospace', fontWeight: 800, fontSize: 13,
+              background: activeGene.color + '22', border: `1px solid ${activeGene.color}55`,
+              color: activeGene.color, fontFamily: 'monospace', fontWeight: 800, fontSize: 13,
               padding: '3px 10px', borderRadius: 6,
             }}>{activeGene.gene_id}</span>
             <span style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: 11 }}>{activeGene.mechanism}</span>
@@ -478,14 +539,13 @@ const CircularGenomePlot = ({
               background: activeGene.location === 'plasmid' ? '#7c3aed22' : '#0f172a',
               border: `1px solid ${activeGene.location === 'plasmid' ? '#7c3aed' : '#334155'}`,
               color: activeGene.location === 'plasmid' ? '#a78bfa' : '#64748b',
-              fontFamily: 'monospace', fontSize: 10,
-              padding: '2px 8px', borderRadius: 4,
+              fontFamily: 'monospace', fontSize: 10, padding: '2px 8px', borderRadius: 4,
             }}>
               {activeGene.location === 'plasmid' ? `📍 ${activeGene.plasmid_name}` : '🧬 Chromosome'}
             </span>
           </div>
 
-          <p style={{ color: '#cbd5e1', fontFamily: 'system-ui, sans-serif', fontSize: 13, lineHeight: 1.65, margin: '0 0 12px' }}>
+          <p style={{ color: '#cbd5e1', fontSize: 13, lineHeight: 1.65, margin: '0 0 12px' }}>
             {activeGene.description}
           </p>
 
@@ -493,7 +553,7 @@ const CircularGenomePlot = ({
             <div>
               <div style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.08em', marginBottom: 5 }}>DEFEATS</div>
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
-                {activeGene.drugs_defeated.map((drug) => (
+                {activeGene.drugs_defeated.map(drug => (
                   <span key={drug} style={{
                     background: '#ef444422', border: '1px solid #ef444444',
                     color: '#fca5a5', fontFamily: 'monospace', fontSize: 10,
