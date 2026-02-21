@@ -258,11 +258,49 @@ function App() {
                 background: 'var(--glass-white)',
                 borderRadius: 'var(--radius-sm)',
                 border: '1px solid var(--border-hairline)',
-                display: 'flex', alignItems: 'center', gap: '1rem'
+                display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap'
               }}>
-                <span style={{ fontWeight: 700, color: 'var(--navy-base)', fontSize: '1rem' }}>
-                  {analysisResults.name}
+              {/* Genome ID */}
+              <div>
+                <div style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.08em', marginBottom: 3 }}>
+                  GENOME
+                </div>
+                <span style={{ fontWeight: 700, color: 'var(--navy-base)', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                  {analysisResults.name.length > 40 ? analysisResults.name.slice(0, 40) + '...' : analysisResults.name}
                 </span>
+              </div>
+
+              <div style={{ width: 1, height: 36, background: 'var(--border-hairline)' }} />
+
+              {/* Organism */}
+              <div>
+                <div style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.08em', marginBottom: 3 }}>
+                  ORGANISM
+                </div>
+                <span style={{ fontWeight: 700, color: 'var(--navy-base)', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                  Escherichia coli
+                </span>
+              </div>
+
+              <div style={{ width: 1, height: 36, background: 'var(--border-hairline)' }} />
+
+              {/* Resistance genes */}
+              <div>
+                <div style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.08em', marginBottom: 3 }}>
+                  RESISTANCE GENES
+                </div>
+                <span style={{ fontWeight: 700, color: 'var(--navy-base)', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+                  {analysisResults.resistance_genes?.length || 0} detected
+                </span>
+              </div>
+
+              <div style={{ width: 1, height: 36, background: 'var(--border-hairline)' }} />
+
+              {/* Risk level */}
+              <div>
+                <div style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '0.7rem', letterSpacing: '0.08em', marginBottom: 3 }}>
+                  RISK LEVEL
+                </div>
                 <span style={{
                   fontWeight: 700, fontSize: '0.8rem', padding: '0.25rem 0.75rem',
                   borderRadius: 4, background: 'rgba(231,76,60,0.1)',
@@ -271,6 +309,7 @@ function App() {
                   {analysisResults.risk_level}
                 </span>
               </div>
+            </div>
 
               {/* Results grid */}
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.5fr', gap: '2rem' }}>
