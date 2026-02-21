@@ -42,7 +42,8 @@ const transformApiResponse = (data) => {
     name: data.genome_name,
     risk_level: getRiskLevel(data.summary?.resistant_count || 0),
     predictions,
-    resistance_genes: []
+    resistance_genes: data.resistance_genes || [],
+    genome_data: data.genome_data || { chromosome: { length: 5100000 } },
   };
 };
 
@@ -278,7 +279,7 @@ function App() {
                   onDrugClick={setActiveGene}
                 />
                 <CircularGenomePlot
-                  genomeData={{ chromosome: { length: 5100000 } }}
+                  genomeData={analysisResults.genome_data}
                   resistanceGenes={analysisResults.resistance_genes}
                   onGeneClick={setActiveGene}
                 />
