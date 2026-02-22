@@ -4,6 +4,8 @@ import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
 import MechanismDiagrams from './components/MechanismDiagrams';
 import StatisticsPanel from './components/StatisticsPanel';
+import VerificationPanel from './components/VerificationPanel';
+import ShapExplanation from './components/ShapExplanation';
 
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -39,6 +41,7 @@ const transformApiResponse = (data) => {
       class: getAntibioticClass(p.antibiotic),
     };
   });
+
   return {
     name: data.genome_name,
     organism: data.organism || 'Escherichia coli',
@@ -49,6 +52,11 @@ const transformApiResponse = (data) => {
     raw_predictions: data.predictions,
     resistance_genes: data.resistance_genes || [],
     genome_data: data.genome_data || { chromosome: { length: 5100000 } },
+
+    // ✅ NEW
+    lab_results: data.lab_results || {},                 // {drug: 'resistant'|'susceptible'}
+    genome_in_training_set: !!data.genome_in_training_set,
+    shap: data.shap || {},                               // {drug: [{pattern, importance, direction, note?}, ...]}
   };
 };
 
@@ -307,50 +315,63 @@ const TabOverview = ({ results }) => {
   const susceptibleDrugs = Object.entries(results.predictions).filter(([, v]) => v.prediction === 'susceptible');
 
   return (
-    <div>
-      {/* Stats */}
-      <div style={{ display: 'flex', gap: 48, marginBottom: 48, flexWrap: 'wrap' }}>
-        {[
-          { val: results.resistance_genes?.length || 0, label: 'resistance genes' },
-          { val: results.resistant_count,               label: 'antibiotics resistant' },
-          { val: results.susceptible_count,             label: 'antibiotics susceptible' },
-          { val: results.resistance_genes?.filter(g => g.location === 'plasmid').length || 0, label: 'mobile elements' },
-        ].map((s, i) => (
-          <div key={i}>
-            <div style={{ fontSize: 32, fontWeight: 600, color: '#111827', lineHeight: 1, marginBottom: 8 }}>{s.val}</div>
-            <div style={{ fontSize: 14, color: '#6b7280' }}>{s.label}</div>
+    <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      {/* LEFT: existing overview content */}
+      <div style={{ flex: '1 1 720px', minWidth: 320 }}>
+        {/* Stats */}
+        <div style={{ display: 'flex', gap: 48, marginBottom: 48, flexWrap: 'wrap' }}>
+          {[
+            { val: results.resistance_genes?.length || 0, label: 'resistance genes' },
+            { val: results.resistant_count,               label: 'antibiotics resistant' },
+            { val: results.susceptible_count,             label: 'antibiotics susceptible' },
+            { val: results.resistance_genes?.filter(g => g.location === 'plasmid').length || 0, label: 'mobile elements' },
+          ].map((s, i) => (
+            <div key={i}>
+              <div style={{ fontSize: 32, fontWeight: 600, color: '#111827', lineHeight: 1, marginBottom: 8 }}>{s.val}</div>
+              <div style={{ fontSize: 14, color: '#6b7280' }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Summary table */}
+        <div style={{ maxWidth: 780 }}>
+          <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+            <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Antibiotic</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Class</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Prediction</th>
+                  <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 500, color: '#6b7280' }}>Confidence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(results.predictions).map(([drug, data], i) => (
+                  <tr key={drug} style={{ borderBottom: i < Object.keys(results.predictions).length - 1 ? '1px solid #f3f4f6' : 'none' }}>
+                    <td style={{ padding: '12px 16px', color: '#111827', textTransform: 'capitalize' }}>{drug}</td>
+                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{data.class}</td>
+                    <td style={{ padding: '12px 16px', fontWeight: 500, color: data.prediction === 'resistant' ? '#dc2626' : '#16a34a' }}>
+                      {data.prediction.charAt(0).toUpperCase() + data.prediction.slice(1)}
+                    </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right', color: '#9ca3af' }}>
+                      {Math.round(data.confidence * 100)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* Summary table */}
-      <div style={{ maxWidth: 600 }}>
-        <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-          <table style={{ width: '100%', fontSize: 14, borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Antibiotic</th>
-                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Class</th>
-                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 500, color: '#6b7280' }}>Prediction</th>
-                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 500, color: '#6b7280' }}>Confidence</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(results.predictions).map(([drug, data], i) => (
-                <tr key={drug} style={{ borderBottom: i < Object.keys(results.predictions).length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-                  <td style={{ padding: '12px 16px', color: '#111827', textTransform: 'capitalize' }}>{drug}</td>
-                  <td style={{ padding: '12px 16px', color: '#6b7280' }}>{data.class}</td>
-                  <td style={{ padding: '12px 16px', fontWeight: 500, color: data.prediction === 'resistant' ? '#dc2626' : '#16a34a' }}>
-                    {data.prediction.charAt(0).toUpperCase() + data.prediction.slice(1)}
-                  </td>
-                  <td style={{ padding: '12px 16px', textAlign: 'right', color: '#9ca3af' }}>
-                    {Math.round(data.confidence * 100)}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* RIGHT: verification panel */}
+      <div style={{ flex: '0 0 420px' }}>
+        <VerificationPanel
+          predictions={results.predictions}
+          labResults={results.lab_results}
+          genomeInTrainingSet={results.genome_in_training_set}
+          genomeName={results.name}
+        />
       </div>
     </div>
   );
@@ -500,11 +521,16 @@ const ResultsView = ({ pathogen, results, fileName, onBack }) => {
             resistanceGenes={results.resistance_genes}
           />
         )}
-        {activeTab === 'Antibiogram'     && (
-          <Antibiogram
-            predictions={results.predictions}
-            resistanceGenes={results.resistance_genes}
-          />
+        {activeTab === 'Antibiogram' && (
+          <div style={{ maxWidth: 1100 }}>
+            <Antibiogram
+              predictions={results.predictions}
+              resistanceGenes={results.resistance_genes}
+            />
+
+            {/* ✅ SHAP right under Antibiogram */}
+            <ShapExplanation shap={results.shap} predictions={results.predictions} />
+          </div>
         )}
         {activeTab === 'Mechanisms' && (
           <MechanismDiagrams resistanceGenes={results.resistance_genes} />
