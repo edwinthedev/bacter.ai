@@ -122,9 +122,21 @@ const FileIcon = () => (
 // ─── Navbar ───────────────────────────────────────────────────────────────────
 const Navbar = ({ onHome }) => (
   <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '1px solid transparent' }}>
-    <div onClick={onHome} style={{ cursor: 'pointer', display: 'flex', alignItems: 'baseline', gap: 2 }}>
-      <span style={{ fontSize: 35, fontWeight: 700, color: '#0d9488', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>bacter</span>
-      <span style={{ fontSize: 35, fontWeight: 700, color: '#111827', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>.ai</span>
+    <div onClick={onHome} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
+      {/* Petri dish icon */}
+      <svg width="32" height="32" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="26" fill="none" stroke="#0d9488" strokeWidth="2.5"/>
+        <circle cx="32" cy="32" r="19" fill="none" stroke="#0d9488" strokeWidth="1" opacity="0.3"/>
+        <circle cx="28" cy="27" r="4" fill="#0d9488" opacity="0.9"/>
+        <circle cx="38" cy="34" r="3" fill="#0d9488" opacity="0.6"/>
+        <circle cx="25" cy="37" r="2.5" fill="#0d9488" opacity="0.5"/>
+        <circle cx="36" cy="24" r="2" fill="#0d9488" opacity="0.4"/>
+      </svg>
+      {/* Wordmark */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+        <span style={{ fontSize: 22, fontWeight: 700, color: '#0d9488', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>bacter</span>
+        <span style={{ fontSize: 22, fontWeight: 700, color: '#111827', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>.ai</span>
+      </div>
     </div>
     <span style={{ fontSize: 13, color: '#9ca3af', fontFamily: 'monospace', letterSpacing: '0.04em' }}>Clinical Resistance Analysis</span>
   </nav>
