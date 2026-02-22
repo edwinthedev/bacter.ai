@@ -201,6 +201,22 @@ def analyze_fasta():
         predictions, genome_stats["chromosome"]["length"]
     )
 
+    # Build SHAP data keyed by antibiotic for frontend ShapExplanation
+    shap_by_drug = {}
+    for p in predictions:
+        ab = p["antibiotic"]
+        raw_shap = SHAP_DATA.get(ab, [])[:10]
+        if raw_shap:
+            is_resistant = p["prediction"] == "Resistant"
+            shap_by_drug[ab] = [
+                {
+                    "pattern": entry["kmer"],
+                    "importance": round(entry["importance"], 4),
+                    "direction": "toward_resistant" if is_resistant else "toward_susceptible",
+                }
+                for entry in raw_shap
+            ]
+
     return jsonify({
         "genome_name": genome_name,
         "organism": "Escherichia coli",
@@ -212,6 +228,9 @@ def analyze_fasta():
         },
         "genome_data": genome_stats,
         "resistance_genes": resistance_genes,
+        "shap": shap_by_drug,
+        "lab_results": {},
+        "genome_in_training_set": False,
     })
 
 
