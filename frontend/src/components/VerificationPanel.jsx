@@ -111,11 +111,10 @@ export default function VerificationPanel({
                 {r.match !== null ? (
                   <span style={{
                     fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 6,
-                    background: r.match ? "#f0fdf4" : "#fef2f2",
                     color: r.match ? "#16a34a" : "#dc2626",
                     border: `1px solid ${r.match ? "#bbf7d0" : "#fecaca"}`,
                   }}>
-                    {r.match ? "✓ Match" : "✗ Mismatch"}
+                    {r.match ? "✓" : "✗"}
                   </span>
                 ) : (
                   <span style={{
