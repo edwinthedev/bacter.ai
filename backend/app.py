@@ -6,6 +6,7 @@ Endpoints:
   POST /api/analyze         — Get predictions for a demo genome (by ID)
   POST /api/analyze_fasta   — Analyze raw FASTA text through trained models
   GET  /api/metrics         — Model performance metrics
+  GET  /api/validation      — Bootstrap validation stats per antibiotic
 """
 
 import json
@@ -171,7 +172,7 @@ def analyze_fasta():
         confidence = float(prob[1]) if pred_class == 1 else float(prob[0])
 
         ab_metrics = METRICS.get(ab, {})
-        top_kmers = SHAP_DATA.get(ab, [])[:5]
+        top_kmers = SHAP_DATA.get(ab, [])[:10]
 
         predictions.append({
             "antibiotic": ab,
@@ -220,6 +221,15 @@ def get_metrics():
     if not METRICS:
         return jsonify({"error": "No metrics available"}), 404
     return jsonify(METRICS)
+
+
+@app.route("/api/validation", methods=["GET"])
+def get_validation():
+    """Return bootstrap validation stats per antibiotic."""
+    path = os.path.join(MODELS_DIR, "validation_stats.json")
+    if not os.path.exists(path):
+        return jsonify({"error": "No validation stats available. Run training/validate.py first."}), 404
+    return jsonify(load_json(path))
 
 
 # Load models at startup
