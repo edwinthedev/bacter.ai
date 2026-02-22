@@ -70,81 +70,59 @@ const MOCK_GENES = [
   },
 ];
 
-// Pentagon radar chart for resistance profile
+// ── Radar chart ───────────────────────────────────────────────────────────────
 const ResistanceRadar = ({ genes }) => {
   const axes = [
-    { label: 'β-Lactams', key: 'betalactam' },
+    { label: 'β-Lactams',        key: 'betalactam' },
     { label: 'Fluoroquinolones', key: 'fluoroquinolone' },
-    { label: 'Aminoglycosides', key: 'aminoglycoside' },
-    { label: 'Carbapenems', key: 'carbapenem' },
-    { label: 'Sulfonamides', key: 'sulfonamide' },
+    { label: 'Aminoglycosides',  key: 'aminoglycoside' },
+    { label: 'Carbapenems',      key: 'carbapenem' },
+    { label: 'Sulfonamides',     key: 'sulfonamide' },
   ];
-
   const drugMap = {
-    betalactam: ['ampicillin', 'amoxicillin/clavulanic acid', 'ceftriaxone', 'ceftazidime'],
+    betalactam:      ['ampicillin', 'amoxicillin/clavulanic acid', 'ceftriaxone', 'ceftazidime'],
     fluoroquinolone: ['ciprofloxacin'],
-    aminoglycoside: ['gentamicin', 'amikacin'],
-    carbapenem: ['meropenem', 'imipenem'],
-    sulfonamide: ['trimethoprim/sulfamethoxazole'],
+    aminoglycoside:  ['gentamicin', 'amikacin'],
+    carbapenem:      ['meropenem', 'imipenem'],
+    sulfonamide:     ['trimethoprim/sulfamethoxazole'],
   };
 
   const allDefeated = genes.flatMap(g => g.drugs_defeated || []);
-
   const scores = axes.map(axis => {
     const drugs = drugMap[axis.key];
     const hits = drugs.filter(d => allDefeated.includes(d)).length;
     return Math.min(hits / drugs.length, 1);
   });
 
-  const W = 200, H = 200;
-  const cx = W / 2, cy = H / 2;
-  const maxR = 70;
-  const n = axes.length;
-
+  const W = 240, H = 240, cx = W / 2, cy = H / 2, maxR = 80, n = axes.length;
   const getPoint = (i, r) => {
-    const angle = (i / n) * 2 * Math.PI - Math.PI / 2;
-    return [cx + r * Math.cos(angle), cy + r * Math.sin(angle)];
+    const a = (i / n) * 2 * Math.PI - Math.PI / 2;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
   };
-
-  const gridLevels = [0.25, 0.5, 0.75, 1.0];
   const radarPoints = scores.map((s, i) => getPoint(i, s * maxR));
   const radarPath = radarPoints.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ') + 'Z';
 
   return (
     <svg width={W} height={H} style={{ display: 'block', margin: '0 auto' }}>
-      {/* Grid pentagons */}
-      {gridLevels.map(level => {
+      {[0.25, 0.5, 0.75, 1.0].map(level => {
         const pts = Array.from({ length: n }, (_, i) => getPoint(i, level * maxR));
         const path = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0]},${p[1]}`).join(' ') + 'Z';
-        return (
-          <path key={level} d={path} fill="none"
-            stroke="#334155" strokeWidth={0.8} opacity={0.5} />
-        );
+        return <path key={level} d={path} fill="none" stroke="#334155" strokeWidth={0.8} opacity={0.5} />;
       })}
-
-      {/* Axis lines */}
       {axes.map((_, i) => {
         const [x, y] = getPoint(i, maxR);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y}
-          stroke="#334155" strokeWidth={0.8} opacity={0.5} />;
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y} stroke="#334155" strokeWidth={0.8} opacity={0.5} />;
       })}
-
-      {/* Filled radar */}
-      <path d={radarPath} fill="#ef4444" opacity={0.25} />
+      <path d={radarPath} fill="#ef4444" opacity={0.2} />
       <path d={radarPath} fill="none" stroke="#ef4444" strokeWidth={2} opacity={0.8} />
-
-      {/* Score dots */}
       {radarPoints.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r={3} fill="#ef4444" opacity={0.9} />
+        <circle key={i} cx={x} cy={y} r={4} fill="#ef4444" opacity={0.9} />
       ))}
-
-      {/* Labels */}
       {axes.map((axis, i) => {
-        const [x, y] = getPoint(i, maxR + 16);
+        const [x, y] = getPoint(i, maxR + 18);
         return (
-          <text key={i} x={x} y={y}
-            textAnchor="middle" dominantBaseline="middle"
-            fill="#94a3b8" fontSize="8px" fontFamily="monospace">
+          <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
+            fill="#94a3b8" fontSize="9px" fontFamily="monospace">
             {axis.label}
           </text>
         );
@@ -153,17 +131,35 @@ const ResistanceRadar = ({ genes }) => {
   );
 };
 
+// ── Main component ────────────────────────────────────────────────────────────
 const CircularGenomePlot = ({
   genomeData = MOCK_GENOME,
   resistanceGenes = MOCK_GENES,
   onGeneClick,
 }) => {
   const svgRef = useRef(null);
+  const zoomRef = useRef(null);
   const [activeGene, setActiveGene] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const handleGeneClick = (gene) => {
     setActiveGene(gene);
     if (onGeneClick) onGeneClick(gene);
+  };
+
+  const handleZoomIn = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 1.4);
+  };
+
+  const handleZoomOut = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(300).call(zoomRef.current.scaleBy, 1 / 1.4);
+  };
+
+  const handleReset = () => {
+    if (!svgRef.current || !zoomRef.current) return;
+    d3.select(svgRef.current).transition().duration(400).call(zoomRef.current.transform, d3.zoomIdentity);
   };
 
   useEffect(() => {
@@ -172,291 +168,187 @@ const CircularGenomePlot = ({
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const W = 560, H = 560;
-    const cx = W / 2, cy = H / 2;
+    // Larger viewBox to accommodate plasmids around the outside
+    const W = 780, H = 780, cx = W / 2, cy = H / 2;
+    const R_DNA_OUTER = 220, R_DNA_INNER = 204, R_GC_BASE = 155, R_INNER = 100;
 
-    // Ring radii — DNA is the OUTERMOST ring
-    const R_DNA_OUTER = 240;   // outer edge of DNA ring
-    const R_DNA_INNER = 224;   // inner edge of DNA ring
-    const R_GENE      = 218;   // resistance gene arcs (just inside DNA)
-    const R_GC_BASE   = 170;   // GC content track
-    const R_INNER     = 110;   // inner fill
+    svg.attr('viewBox', `0 0 ${W} ${H}`);
 
-    const root = svg
-      .attr('viewBox', `0 0 ${W} ${H}`)
-      .append('g')
-      .attr('transform', `translate(${cx},${cy})`);
+    // Background
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#020617').attr('rx', 16);
 
-    const genomeLength = genomeData.chromosome.length;
-    const angle = d3.scaleLinear()
-      .domain([0, genomeLength])
-      .range([0, 2 * Math.PI]);
-
-    // Defs
     const defs = svg.append('defs');
-    svg.insert('rect', ':first-child')
-      .attr('width', W).attr('height', H)
-      .attr('fill', '#020617').attr('rx', 16);
-
     const geneGlow = defs.append('filter').attr('id', 'gene-glow2');
     geneGlow.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
     const merge = geneGlow.append('feMerge');
     merge.append('feMergeNode').attr('in', 'blur');
     merge.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    // Inner dark fill
-    root.append('circle').attr('r', R_INNER)
-      .attr('fill', '#0a0f1e').attr('opacity', 0.9);
+    // Zoomable group
+    const zoomGroup = svg.append('g').attr('class', 'zoom-group');
+    const root = zoomGroup.append('g').attr('transform', `translate(${cx},${cy})`);
 
-    // ── GC content track ──────────────────────────────────────────
+    const genomeLength = genomeData.chromosome.length;
+    const angle = d3.scaleLinear().domain([0, genomeLength]).range([0, 2 * Math.PI]);
+
+    root.append('circle').attr('r', R_INNER).attr('fill', '#0a0f1e').attr('opacity', 0.9);
+
+    // GC track
     if (genomeData.gc_content_windows?.length) {
       const gcVals = genomeData.gc_content_windows.map(w => w.gc);
       const avgGC = d3.mean(gcVals);
       const gcExt = d3.max(gcVals.map(v => Math.abs(v - avgGC)));
-      const gcR = d3.scaleLinear()
-        .domain([avgGC - gcExt, avgGC + gcExt])
-        .range([R_GC_BASE - 28, R_GC_BASE + 28]);
+      const gcR = d3.scaleLinear().domain([avgGC - gcExt, avgGC + gcExt]).range([R_GC_BASE - 25, R_GC_BASE + 25]);
 
-      // GC band background
-      root.append('circle').attr('r', R_GC_BASE)
-        .attr('fill', 'none').attr('stroke', '#1e3a5f')
-        .attr('stroke-width', 56).attr('opacity', 0.12);
-
-      const gcPath = d3.lineRadial()
-        .angle(d => angle((d.start + d.end) / 2))
-        .radius(d => gcR(d.gc))
-        .curve(d3.curveCatmullRomClosed);
+      root.append('circle').attr('r', R_GC_BASE).attr('fill', 'none')
+        .attr('stroke', '#1e3a5f').attr('stroke-width', 50).attr('opacity', 0.12);
 
       root.append('path')
         .datum([...genomeData.gc_content_windows, genomeData.gc_content_windows[0]])
-        .attr('d', gcPath)
-        .attr('fill', 'none').attr('stroke', '#38bdf8')
-        .attr('stroke-width', 1.5).attr('opacity', 0)
-        .transition().duration(1400).delay(500)
-        .attr('opacity', 0.5);
+        .attr('d', d3.lineRadial().angle(d => angle((d.start + d.end) / 2)).radius(d => gcR(d.gc)).curve(d3.curveCatmullRomClosed))
+        .attr('fill', 'none').attr('stroke', '#38bdf8').attr('stroke-width', 1.5).attr('opacity', 0)
+        .transition().duration(1400).delay(500).attr('opacity', 0.5);
 
-      root.append('circle').attr('r', R_GC_BASE)
-        .attr('fill', 'none').attr('stroke', '#38bdf8')
-        .attr('stroke-width', 0.5).attr('stroke-dasharray', '2,5')
-        .attr('opacity', 0.2);
+      root.append('circle').attr('r', R_GC_BASE).attr('fill', 'none')
+        .attr('stroke', '#38bdf8').attr('stroke-width', 0.5).attr('stroke-dasharray', '2,5').attr('opacity', 0.2);
     }
 
-    // ── DNA outer ring (segmented) ─────────────────────────────────
-    const segCount = 120;
-    for (let i = 0; i < segCount; i++) {
-      const a0 = (i / segCount) * 2 * Math.PI - Math.PI / 2;
-      const a1 = ((i + 0.88) / segCount) * 2 * Math.PI - Math.PI / 2;
-      const arc = d3.arc()
-        .innerRadius(R_DNA_INNER)
-        .outerRadius(R_DNA_OUTER)
-        .startAngle(a0 + Math.PI / 2)
-        .endAngle(a1 + Math.PI / 2);
-
-      root.append('path').attr('d', arc)
+    // DNA ring segments
+    for (let i = 0; i < 120; i++) {
+      const a0 = (i / 120) * 2 * Math.PI - Math.PI / 2;
+      const a1 = ((i + 0.88) / 120) * 2 * Math.PI - Math.PI / 2;
+      root.append('path')
+        .attr('d', d3.arc().innerRadius(R_DNA_INNER).outerRadius(R_DNA_OUTER).startAngle(a0 + Math.PI / 2).endAngle(a1 + Math.PI / 2))
         .attr('fill', '#1e293b').attr('opacity', 0)
-        .transition().duration(600).delay(i * 4)
-        .attr('opacity', 0.9);
+        .transition().duration(600).delay(i * 4).attr('opacity', 0.9);
     }
 
-    // Outer glow ring
-    root.append('circle').attr('r', R_DNA_OUTER + 2)
-      .attr('fill', 'none').attr('stroke', '#38bdf8')
-      .attr('stroke-width', 1).attr('opacity', 0.15);
+    root.append('circle').attr('r', R_DNA_OUTER + 2).attr('fill', 'none')
+      .attr('stroke', '#38bdf8').attr('stroke-width', 1).attr('opacity', 0.15);
 
-    // ── Mb tick marks ──────────────────────────────────────────────
+    // Mb ticks
     for (let pos = 0; pos < genomeLength; pos += 1000000) {
       const a = angle(pos) - Math.PI / 2;
       root.append('line')
-        .attr('x1', (R_DNA_INNER - 4) * Math.cos(a))
-        .attr('y1', (R_DNA_INNER - 4) * Math.sin(a))
-        .attr('x2', (R_DNA_OUTER + 8) * Math.cos(a))
-        .attr('y2', (R_DNA_OUTER + 8) * Math.sin(a))
+        .attr('x1', (R_DNA_INNER - 4) * Math.cos(a)).attr('y1', (R_DNA_INNER - 4) * Math.sin(a))
+        .attr('x2', (R_DNA_OUTER + 8) * Math.cos(a)).attr('y2', (R_DNA_OUTER + 8) * Math.sin(a))
         .attr('stroke', '#64748b').attr('stroke-width', 1.5).attr('opacity', 0.6);
-
       root.append('text')
-        .attr('x', (R_DNA_OUTER + 18) * Math.cos(a))
-        .attr('y', (R_DNA_OUTER + 18) * Math.sin(a))
+        .attr('x', (R_DNA_OUTER + 18) * Math.cos(a)).attr('y', (R_DNA_OUTER + 18) * Math.sin(a))
         .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
-        .attr('fill', '#475569').attr('font-size', '8px')
-        .attr('font-family', 'monospace')
+        .attr('fill', '#475569').attr('font-size', '8px').attr('font-family', 'monospace')
         .text(`${pos / 1000000}Mb`);
     }
 
-    // ── Resistance gene arcs ON the DNA ring ───────────────────────
-    const chromGenes = (resistanceGenes || []).filter(g => g.location !== 'plasmid');
-
-    chromGenes.forEach((gene, i) => {
+    // Chromosome genes
+    (resistanceGenes || []).filter(g => g.location !== 'plasmid').forEach((gene, i) => {
       const sa = angle(gene.position_start) - Math.PI / 2;
       const ea = Math.max(angle(gene.position_end) - Math.PI / 2, sa + 0.06);
-
-      // Gene arc sits ON the DNA ring
-      const arc = d3.arc()
-        .innerRadius(R_DNA_INNER - 1)
-        .outerRadius(R_DNA_OUTER + 1)
-        .startAngle(sa + Math.PI / 2)
-        .endAngle(ea + Math.PI / 2);
-
-      const gGroup = root.append('g')
-        .style('cursor', 'pointer')
-        .on('mouseenter', function () {
-          d3.select(this).select('path')
-            .transition().duration(150)
-            .attr('opacity', 1)
-            .attr('filter', 'url(#gene-glow2)');
-        })
-        .on('mouseleave', function () {
-          d3.select(this).select('path')
-            .transition().duration(150)
-            .attr('opacity', 0.9)
-            .attr('filter', null);
-        })
+      const gGroup = root.append('g').style('cursor', 'pointer')
+        .on('mouseenter', function () { d3.select(this).select('path').transition().duration(150).attr('opacity', 1).attr('filter', 'url(#gene-glow2)'); })
+        .on('mouseleave', function () { d3.select(this).select('path').transition().duration(150).attr('opacity', 0.9).attr('filter', null); })
         .on('click', () => handleGeneClick(gene));
 
-      gGroup.append('path').attr('d', arc)
-        .attr('fill', gene.color || '#ef4444')
-        .attr('opacity', 0)
-        .transition().delay(700 + i * 200).duration(500)
-        .attr('opacity', 0.9);
+      gGroup.append('path')
+        .attr('d', d3.arc().innerRadius(R_DNA_INNER - 1).outerRadius(R_DNA_OUTER + 1).startAngle(sa + Math.PI / 2).endAngle(ea + Math.PI / 2))
+        .attr('fill', gene.color || '#ef4444').attr('opacity', 0)
+        .transition().delay(700 + i * 200).duration(500).attr('opacity', 0.9);
 
-      // Label line pointing inward
       const mid = (sa + ea) / 2;
-      const lineInnerR = R_DNA_INNER - 12;
-      const lineOuterR = R_DNA_INNER - 2;
-      const labelR = R_DNA_INNER - 24;
-
       gGroup.append('line')
-        .attr('x1', lineOuterR * Math.cos(mid)).attr('y1', lineOuterR * Math.sin(mid))
-        .attr('x2', lineInnerR * Math.cos(mid)).attr('y2', lineInnerR * Math.sin(mid))
-        .attr('stroke', gene.color).attr('stroke-width', 1)
-        .attr('opacity', 0)
-        .transition().delay(900 + i * 200).duration(300)
-        .attr('opacity', 0.7);
+        .attr('x1', (R_DNA_INNER - 2) * Math.cos(mid)).attr('y1', (R_DNA_INNER - 2) * Math.sin(mid))
+        .attr('x2', (R_DNA_INNER - 12) * Math.cos(mid)).attr('y2', (R_DNA_INNER - 12) * Math.sin(mid))
+        .attr('stroke', gene.color).attr('stroke-width', 1).attr('opacity', 0)
+        .transition().delay(900 + i * 200).duration(300).attr('opacity', 0.7);
 
       const isLeft = mid > Math.PI / 2 && mid < (3 * Math.PI) / 2;
       gGroup.append('text')
-        .attr('x', labelR * Math.cos(mid))
-        .attr('y', labelR * Math.sin(mid))
-        .attr('text-anchor', isLeft ? 'end' : 'start')
-        .attr('dominant-baseline', 'middle')
-        .attr('fill', gene.color).attr('font-size', '10px')
-        .attr('font-weight', '700').attr('font-family', 'monospace')
-        .text(gene.gene_id)
-        .attr('opacity', 0)
-        .transition().delay(1000 + i * 200).duration(300)
-        .attr('opacity', 1);
+        .attr('x', (R_DNA_INNER - 24) * Math.cos(mid)).attr('y', (R_DNA_INNER - 24) * Math.sin(mid))
+        .attr('text-anchor', isLeft ? 'end' : 'start').attr('dominant-baseline', 'middle')
+        .attr('fill', gene.color).attr('font-size', '10px').attr('font-weight', '700').attr('font-family', 'monospace')
+        .text(gene.gene_id).attr('opacity', 0)
+        .transition().delay(1000 + i * 200).duration(300).attr('opacity', 1);
     });
 
-    // ── Plasmid circles positioned around the main ring ───────────
+    // Plasmids — positioned with more room since viewBox is larger
     const plasmidGenes = (resistanceGenes || []).filter(g => g.location === 'plasmid');
     const plasmidNames = [...new Set(plasmidGenes.map(g => g.plasmid_name))];
-
     plasmidNames.forEach((pName, pIdx) => {
       const pGenes = plasmidGenes.filter(g => g.plasmid_name === pName);
-      const pR = 42;
-
-      // Position plasmids OUTSIDE the main ring, evenly spaced
+      const pR = 48;
       const placementAngle = (pIdx / Math.max(plasmidNames.length, 1)) * 2 * Math.PI + Math.PI / 4;
-      const pDist = R_DNA_OUTER + 55;
-      const pCx = pDist * Math.cos(placementAngle);
-      const pCy = pDist * Math.sin(placementAngle);
+      const pDist = R_DNA_OUTER + 90;
+      const pCx = pDist * Math.cos(placementAngle), pCy = pDist * Math.sin(placementAngle);
 
-      // Connector line from main ring to plasmid
-      const connStart = (R_DNA_OUTER + 4);
       root.append('line')
-        .attr('x1', connStart * Math.cos(placementAngle))
-        .attr('y1', connStart * Math.sin(placementAngle))
-        .attr('x2', pCx - pR * Math.cos(placementAngle))
-        .attr('y2', pCy - pR * Math.sin(placementAngle))
-        .attr('stroke', '#475569').attr('stroke-width', 1)
-        .attr('stroke-dasharray', '3,3').attr('opacity', 0)
-        .transition().delay(1800).duration(400)
-        .attr('opacity', 0.5);
+        .attr('x1', (R_DNA_OUTER + 4) * Math.cos(placementAngle)).attr('y1', (R_DNA_OUTER + 4) * Math.sin(placementAngle))
+        .attr('x2', pCx - pR * Math.cos(placementAngle)).attr('y2', pCy - pR * Math.sin(placementAngle))
+        .attr('stroke', '#475569').attr('stroke-width', 1).attr('stroke-dasharray', '3,3').attr('opacity', 0)
+        .transition().delay(1800).duration(400).attr('opacity', 0.5);
 
-      const pGroup = root.append('g')
-        .attr('transform', `translate(${pCx},${pCy})`);
+      const pGroup = root.append('g').attr('transform', `translate(${pCx},${pCy})`);
+      pGroup.append('circle').attr('r', pR).attr('fill', '#0f172a').attr('stroke', '#7c3aed')
+        .attr('stroke-width', 2).attr('stroke-dasharray', '4,3').attr('opacity', 0)
+        .transition().delay(2000).duration(500).attr('opacity', 0.85);
+      pGroup.append('text').attr('y', -pR - 8).attr('text-anchor', 'middle').attr('fill', '#7c3aed')
+        .attr('font-size', '7px').attr('font-family', 'monospace').attr('letter-spacing', '0.1em').text('PLASMID')
+        .attr('opacity', 0).transition().delay(2200).duration(300).attr('opacity', 0.8);
+      pGroup.append('text').attr('y', pR + 12).attr('text-anchor', 'middle').attr('fill', '#94a3b8')
+        .attr('font-size', '8px').attr('font-family', 'monospace').text(pName || `Plasmid ${pIdx + 1}`)
+        .attr('opacity', 0).transition().delay(2200).duration(300).attr('opacity', 1);
 
-      // Plasmid backbone
-      pGroup.append('circle').attr('r', pR)
-        .attr('fill', '#0f172a').attr('stroke', '#7c3aed')
-        .attr('stroke-width', 2).attr('stroke-dasharray', '4,3')
-        .attr('opacity', 0)
-        .transition().delay(2000).duration(500)
-        .attr('opacity', 0.85);
-
-      // PLASMID label
-      pGroup.append('text').attr('y', -pR - 8)
-        .attr('text-anchor', 'middle').attr('fill', '#7c3aed')
-        .attr('font-size', '7px').attr('font-family', 'monospace')
-        .attr('letter-spacing', '0.1em').text('PLASMID')
-        .attr('opacity', 0)
-        .transition().delay(2200).duration(300)
-        .attr('opacity', 0.8);
-
-      pGroup.append('text').attr('y', pR + 12)
-        .attr('text-anchor', 'middle').attr('fill', '#94a3b8')
-        .attr('font-size', '8px').attr('font-family', 'monospace')
-        .text(pName || `Plasmid ${pIdx + 1}`)
-        .attr('opacity', 0)
-        .transition().delay(2200).duration(300)
-        .attr('opacity', 1);
-
-      // Gene arcs on plasmid
       pGenes.forEach((gene, gi) => {
         const gAngle = (gi / pGenes.length) * 2 * Math.PI - Math.PI / 2;
-        const gArc = d3.arc()
-          .innerRadius(pR - 8).outerRadius(pR + 2)
-          .startAngle(gAngle + Math.PI / 2)
-          .endAngle(gAngle + Math.PI / 2 + 0.6);
-
-        pGroup.append('path').attr('d', gArc)
-          .attr('fill', gene.color || '#ef4444')
-          .style('cursor', 'pointer')
-          .attr('opacity', 0)
-          .transition().delay(2400 + gi * 100).duration(400)
-          .attr('opacity', 0.9)
+        pGroup.append('path')
+          .attr('d', d3.arc().innerRadius(pR - 8).outerRadius(pR + 2).startAngle(gAngle + Math.PI / 2).endAngle(gAngle + Math.PI / 2 + 0.6))
+          .attr('fill', gene.color || '#ef4444').style('cursor', 'pointer').attr('opacity', 0)
+          .transition().delay(2400 + gi * 100).duration(400).attr('opacity', 0.9)
           .selection()
           .on('click', () => handleGeneClick(gene))
-          .on('mouseenter', function () {
-            d3.select(this).attr('filter', 'url(#gene-glow2)').attr('opacity', 1);
-          })
-          .on('mouseleave', function () {
-            d3.select(this).attr('filter', null).attr('opacity', 0.9);
-          });
+          .on('mouseenter', function () { d3.select(this).attr('filter', 'url(#gene-glow2)').attr('opacity', 1); })
+          .on('mouseleave', function () { d3.select(this).attr('filter', null).attr('opacity', 0.9); });
 
         pGroup.append('text')
-          .attr('x', (pR + 16) * Math.cos(gAngle))
-          .attr('y', (pR + 16) * Math.sin(gAngle))
+          .attr('x', (pR + 16) * Math.cos(gAngle)).attr('y', (pR + 16) * Math.sin(gAngle))
           .attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
-          .attr('fill', gene.color).attr('font-size', '8px')
-          .attr('font-weight', '700').attr('font-family', 'monospace')
-          .text(gene.gene_id)
-          .attr('opacity', 0)
-          .transition().delay(2600 + gi * 100).duration(300)
-          .attr('opacity', 1);
+          .attr('fill', gene.color).attr('font-size', '8px').attr('font-weight', '700').attr('font-family', 'monospace')
+          .text(gene.gene_id).attr('opacity', 0)
+          .transition().delay(2600 + gi * 100).duration(300).attr('opacity', 1);
       });
     });
 
-    // ── Center labels ──────────────────────────────────────────────
+    // Center labels
     root.append('text').attr('text-anchor', 'middle').attr('y', -14)
       .attr('fill', '#f1f5f9').attr('font-size', '15px').attr('font-weight', '800')
-      .attr('font-family', 'monospace').attr('letter-spacing', '0.05em')
-      .text('E. coli');
-
+      .attr('font-family', 'monospace').attr('letter-spacing', '0.05em').text('E. coli');
     root.append('text').attr('text-anchor', 'middle').attr('y', 6)
       .attr('fill', '#475569').attr('font-size', '10px').attr('font-family', 'monospace')
       .text(`${(genomeLength / 1000000).toFixed(1)} Mb`);
-
     root.append('text').attr('text-anchor', 'middle').attr('y', 24)
-      .attr('fill', '#ef4444').attr('font-size', '10px').attr('font-weight', '600')
-      .attr('font-family', 'monospace')
+      .attr('fill', '#ef4444').attr('font-size', '10px').attr('font-weight', '600').attr('font-family', 'monospace')
       .text(`${resistanceGenes?.length || 0} resistance genes`);
+
+    // ── D3 Zoom ──
+    const zoom = d3.zoom()
+      .scaleExtent([0.4, 5])
+      .on('zoom', (event) => {
+        zoomGroup.attr('transform', event.transform);
+        setZoomLevel(Math.round(event.transform.k * 100) / 100);
+      });
+
+    zoomRef.current = zoom;
+    svg.call(zoom);
+
+    // Start at a scale that fits everything
+    svg.call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(0.85));
 
   }, [genomeData, resistanceGenes]);
 
   return (
     <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #020617 100%)', borderRadius: 16, padding: 24 }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+
+      {/* ── Top: title left, legend right ── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div>
           <h2 style={{ color: '#f1f5f9', fontFamily: 'monospace', fontSize: 18, fontWeight: 800, margin: 0, letterSpacing: '0.05em' }}>
             GENOME MAP
@@ -465,47 +357,74 @@ const CircularGenomePlot = ({
             RESISTANCE GENE LOCALIZATION
           </p>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
           {[
-            { color: '#1e293b', label: 'DNA backbone' },
+            { color: '#1e293b', label: 'DNA backbone', border: true },
             { color: '#38bdf8', label: 'GC content' },
             { color: '#ef4444', label: 'Resistance gene' },
             { color: '#7c3aed', label: 'Plasmid' },
-          ].map(({ color, label }) => (
+          ].map(({ color, label, border }) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 10, height: 10, borderRadius: 2, background: color, border: '1px solid #334155' }} />
+              <div style={{ width: 10, height: 10, borderRadius: 2, background: color, border: border ? '1px solid #334155' : 'none' }} />
               <span style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: 10 }}>{label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Main layout: plot + radar side by side */}
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
-        <svg ref={svgRef} style={{ flex: 1, maxWidth: 560, display: 'block' }} />
+      {/* ── Zoom controls ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+        {[
+          { label: '−', action: handleZoomOut },
+          { label: '⟳', action: handleReset },
+          { label: '+', action: handleZoomIn },
+        ].map(({ label, action }) => (
+          <button key={label} onClick={action} style={{
+            background: '#1e293b', border: '1px solid #334155', color: '#94a3b8',
+            fontFamily: 'monospace', fontSize: 14, fontWeight: 700,
+            width: 30, height: 30, borderRadius: 6, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>{label}</button>
+        ))}
+        <span style={{ color: '#475569', fontFamily: 'monospace', fontSize: 10 }}>
+          {Math.round(zoomLevel * 100)}% · scroll to zoom · drag to pan
+        </span>
+      </div>
 
-        {/* Resistance radar */}
-        <div style={{ minWidth: 200 }}>
+      {/* ── Genome map (scroll/drag enabled) ── */}
+      <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 24, cursor: 'grab' }}>
+        <svg ref={svgRef} style={{ width: '100%', display: 'block' }} />
+      </div>
+
+      {/* ── Bottom: radar left, gene list right ── */}
+      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+        <div style={{ flex: '0 0 auto' }}>
           <div style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.1em', marginBottom: 8, textAlign: 'center' }}>
             RESISTANCE PROFILE
           </div>
           <ResistanceRadar genes={resistanceGenes || []} />
-          <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+        </div>
+
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <div style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 9, letterSpacing: '0.1em', marginBottom: 8 }}>
+            RESISTANCE GENES
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {(resistanceGenes || []).map(g => (
-              <div key={g.gene_id}
-                onClick={() => handleGeneClick(g)}
+              <div key={g.gene_id} onClick={() => handleGeneClick(g)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  cursor: 'pointer', padding: '4px 8px', borderRadius: 6,
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  cursor: 'pointer', padding: '8px 12px', borderRadius: 8,
                   background: '#0f172a', border: `1px solid ${g.color}33`,
-                  transition: 'background 0.15s'
+                  transition: 'background 0.15s',
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = '#1e293b'}
                 onMouseLeave={e => e.currentTarget.style.background = '#0f172a'}
               >
                 <div style={{ width: 8, height: 8, borderRadius: 2, background: g.color, flexShrink: 0 }} />
-                <span style={{ color: g.color, fontFamily: 'monospace', fontSize: 10, fontWeight: 700 }}>{g.gene_id}</span>
-                <span style={{ color: '#475569', fontFamily: 'monospace', fontSize: 9, marginLeft: 'auto' }}>
+                <span style={{ color: g.color, fontFamily: 'monospace', fontSize: 11, fontWeight: 700 }}>{g.gene_id}</span>
+                <span style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 10, flex: 1 }}>{g.mechanism}</span>
+                <span style={{ color: '#475569', fontFamily: 'monospace', fontSize: 9, whiteSpace: 'nowrap' }}>
                   {g.location === 'plasmid' ? '⚠ plasmid' : 'chr'}
                 </span>
               </div>
@@ -514,20 +433,20 @@ const CircularGenomePlot = ({
         </div>
       </div>
 
-      {/* Gene detail panel */}
+      {/* ── Gene detail panel ── */}
       {activeGene && (
         <div style={{
-          marginTop: 16, background: '#0f172a',
+          marginTop: 20, background: '#0f172a',
           border: `1px solid ${activeGene.color}44`,
           borderLeft: `3px solid ${activeGene.color}`,
           borderRadius: 10, padding: '16px 20px', position: 'relative',
         }}>
           <button onClick={() => setActiveGene(null)} style={{
             position: 'absolute', top: 10, right: 12, background: 'none',
-            border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18
+            border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 18,
           }}>×</button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
             <span style={{
               background: activeGene.color + '22', border: `1px solid ${activeGene.color}55`,
               color: activeGene.color, fontFamily: 'monospace', fontWeight: 800, fontSize: 13,
@@ -549,7 +468,7 @@ const CircularGenomePlot = ({
             {activeGene.description}
           </p>
 
-          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
             <div>
               <div style={{ color: '#64748b', fontFamily: 'monospace', fontSize: 10, letterSpacing: '0.08em', marginBottom: 5 }}>DEFEATS</div>
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
