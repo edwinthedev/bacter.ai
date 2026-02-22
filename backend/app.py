@@ -62,15 +62,15 @@ def load_models():
         with open(metrics_path) as f:
             METRICS = json.load(f)
 
-    # Load AMR phenotype lab data for verification
-    amr_path = os.path.join(BASE_DIR, "..", "training", "data", "amr_all.csv")
+    # Load AMR phenotype lab data for verification (compact version in backend/data)
+    amr_path = os.path.join(BASE_DIR, "data", "amr_labels.csv")
     if os.path.exists(amr_path):
         AMR_DF = pd.read_csv(amr_path, dtype=str)
         AMR_DF["antibiotic"] = AMR_DF["antibiotic"].str.lower()
         print(f"Loaded AMR lab data: {len(AMR_DF)} rows")
 
     # Load training genome IDs to flag training set membership
-    gids_path = os.path.join(BASE_DIR, "..", "training", "data", "processed", "genome_ids.json")
+    gids_path = os.path.join(BASE_DIR, "data", "genome_ids.json")
     if os.path.exists(gids_path):
         with open(gids_path) as f:
             TRAINING_GENOME_IDS = set(json.load(f))
@@ -103,7 +103,7 @@ def parse_genome_id(fasta_text):
 
 
 def get_lab_results(genome_id):
-    """Look up lab-confirmed AMR phenotypes from amr_all.csv for a genome."""
+    """Look up lab-confirmed AMR phenotypes from amr_labels.csv for a genome."""
     if AMR_DF is None or genome_id is None:
         return {}
     rows = AMR_DF[AMR_DF["genome_id"] == genome_id]
@@ -115,8 +115,6 @@ def get_lab_results(genome_id):
             lab_results[ab] = {
                 "phenotype": phenotype,
                 "method": str(row.get("laboratory_typing_method", "")) or None,
-                "measurement": str(row.get("measurement_value", "")) or None,
-                "measurement_unit": str(row.get("measurement_unit", "")) or None,
             }
     return lab_results
 
