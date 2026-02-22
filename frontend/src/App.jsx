@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
+
+const API_BASE = import.meta.env.VITE_API_URL || '';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
 import MechanismDiagrams from './components/MechanismDiagrams';
@@ -615,7 +617,7 @@ function App() {
   const handleAnalyze = async (fastaText) => {
     setFileName(fastaText ? 'uploaded.fasta' : 'demo.fasta');
     try {
-      const res = await axios.post('/api/analyze_fasta', { fasta: fastaText });
+      const res = await axios.post(`${API_BASE}/api/analyze_fasta`, { fasta: fastaText });
       setResults(transformApiResponse(res.data));
     } catch (err) {
       console.error('API unavailable, using mock data:', err);

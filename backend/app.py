@@ -20,7 +20,11 @@ from flask_cors import CORS
 import joblib
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    os.environ.get("FRONTEND_URL", ""),
+]}})
 
 BASE_DIR = os.path.dirname(__file__)
 DEMO_DIR = os.path.join(BASE_DIR, "data", "demo_genomes")
@@ -322,4 +326,5 @@ def get_validation():
 load_models()
 
 if __name__ == "__main__":
-    app.run(debug=False, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

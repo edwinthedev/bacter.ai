@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 // Wilson score interval — correct for accuracy (a proportion over n samples)
@@ -366,7 +368,7 @@ const StatisticsPanel = () => {
   const [sortBy, setSortBy]     = useState('accuracy');
 
   useEffect(() => {
-    fetch('/api/metrics')
+    fetch(`${API_BASE}/api/metrics`)
       .then(r => r.json())
       .then(data => { setMetrics(data); setLoading(false); })
       .catch(() => { setError('Could not reach backend — is the server running?'); setLoading(false); });

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: bacter-ai-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && python app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
+      - key: FRONTEND_URL
+        sync: false
