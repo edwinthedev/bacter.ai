@@ -1,18 +1,39 @@
+const cssVars = `
+  :root {
+    --glass-white: rgba(255,255,255,0.95);
+    --glass-shade: #f3f4f6;
+    --radius-lg: 12px;
+    --shadow-glass: 0 1px 3px rgba(0,0,0,0.06);
+    --border-hairline: #e5e7eb;
+    --navy-base: #111827;
+    --text-sub: #6b7280;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    --c-resistant: #dc2626;
+    --c-susceptible: #16a34a;
+    --c-intermediate: #d97706;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(-12px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+`;
+
 const Antibiogram = ({ predictions, resistanceGenes, onDrugClick }) => {
     const sortedDrugs = Object.entries(predictions).sort(([, a], [, b]) => {
       if (a.prediction === b.prediction) return b.probability - a.probability;
       return a.prediction === 'resistant' ? -1 : 1;
     });
-  
+
     const resistant = sortedDrugs.filter(([, d]) => d.prediction === 'resistant').length;
     const susceptible = sortedDrugs.filter(([, d]) => d.prediction === 'susceptible').length;
-  
+
     return (
       <article style={{
         background: 'var(--glass-white)', borderRadius: 'var(--radius-lg)',
         padding: '2rem', boxShadow: 'var(--shadow-glass)',
         border: '1px solid var(--border-hairline)'
       }}>
+        <style>{cssVars}</style>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid var(--border-hairline)' }}>
           <div>
             <h2 style={{ fontSize: '1.25rem', color: 'var(--navy-base)', fontWeight: 700 }}>Antibiogram</h2>
@@ -28,7 +49,7 @@ const Antibiogram = ({ predictions, resistanceGenes, onDrugClick }) => {
               const isR = data.prediction === 'resistant';
               const color = isR ? 'var(--c-resistant)' : 'var(--c-susceptible)';
               return (
-                <tr key={drug} onClick={() => onDrugClick(drug)} style={{ cursor: 'pointer', opacity: 0, animation: `slideInRight 0.4s ease forwards ${0.4 + index * 0.08}s` }}>
+                <tr key={drug} onClick={() => onDrugClick?.(drug)} style={{ cursor: 'pointer', opacity: 0, animation: `slideInRight 0.4s ease forwards ${0.4 + index * 0.08}s` }}>
                   <td style={{ color: 'var(--text-sub)', fontSize: '0.85rem', width: 30 }}>{index + 1}</td>
                   <td style={{ paddingRight: '1rem' }}>
                     <span style={{ display: 'block', fontWeight: 600, color: 'var(--navy-base)', textTransform: 'capitalize' }}>{drug}</span>

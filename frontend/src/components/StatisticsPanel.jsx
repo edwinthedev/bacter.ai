@@ -294,7 +294,7 @@ const StatisticsPanel = () => {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/metrics');
+        const res = await fetch('/api/metrics');
         const data = await res.json();
         const merged = {};
         Object.entries(data).forEach(([drug, m]) => {
