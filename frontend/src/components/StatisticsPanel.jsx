@@ -294,18 +294,46 @@ const StatisticsPanel = () => {
   useEffect(() => {
     const fetch_ = async () => {
       try {
-        const res = await fetch('/api/metrics');
-        const data = await res.json();
+        // Fetch both metrics and validation stats in parallel
+        const [metricsRes, validationRes] = await Promise.all([
+          fetch('/api/metrics'),
+          fetch('/api/validation').catch(() => null),
+        ]);
+        const data = await metricsRes.json();
+        const validation = validationRes?.ok ? await validationRes.json() : {};
+
         const merged = {};
         Object.entries(data).forEach(([drug, m]) => {
           const mock = MOCK_METRICS[drug] || {};
+          const v = validation[drug] || {};
           const acc = m.cv_accuracy ?? mock.cv_accuracy;
           const f1  = m.cv_f1 ?? mock.cv_f1;
+          const auc = m.cv_auc ?? mock.roc_auc;
+
+          // Use real confusion matrix from validation, else compute from mock
+          const confusion = v.confusion_matrix
+            ? v.confusion_matrix
+            : mock.confusion;
+
+          // Use real bootstrap CIs from validation, else approximate
+          const accCi = v.accuracy
+            ? [v.accuracy.ci_lower, v.accuracy.ci_upper]
+            : [Math.max(0, acc - 0.035), Math.min(1, acc + 0.035)];
+          const f1Ci = v.f1
+            ? [v.f1.ci_lower, v.f1.ci_upper]
+            : [Math.max(0, f1 - 0.03), Math.min(1, f1 + 0.03)];
+
           merged[drug] = {
             ...mock,
-            cv_accuracy: acc, cv_f1: f1,
-            cv_accuracy_ci: [Math.max(0, acc - 0.035), Math.min(1, acc + 0.035)],
-            cv_f1_ci:       [Math.max(0, f1 - 0.03),  Math.min(1, f1 + 0.03)],
+            cv_accuracy: acc,
+            cv_f1: f1,
+            roc_auc: auc,
+            n_samples: m.n_samples ?? mock.n_samples,
+            n_resistant: m.n_resistant ?? mock.n_resistant,
+            n_susceptible: m.n_susceptible ?? mock.n_susceptible,
+            cv_accuracy_ci: accCi,
+            cv_f1_ci: f1Ci,
+            confusion: confusion,
           };
         });
         setMetrics(Object.keys(merged).length > 0 ? merged : MOCK_METRICS);
