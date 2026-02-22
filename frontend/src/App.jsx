@@ -379,14 +379,14 @@ const TabOverview = ({ results }) => {
       </div>
 
       {/* RIGHT: verification panel */}
-      <div style={{ flex: '0 0 420px' }}>
-        <VerificationPanel
-          predictions={results.predictions}
-          labResults={results.lab_results}
-          genomeInTrainingSet={results.genome_in_training_set}
-          genomeName={results.name}
-        />
-      </div>
+        <div style={{ flex: '1 1 400px', display: 'flex', justifyContent: 'center' }}>
+          <VerificationPanel
+            predictions={results.predictions}
+            labResults={results.lab_results}
+            genomeInTrainingSet={results.genome_in_training_set}
+            genomeName={results.name}
+          />
+        </div>
     </div>
   );
 };
