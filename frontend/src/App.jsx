@@ -39,6 +39,9 @@ const transformApiResponse = (data) => {
       confidence: p.confidence,
       resistant_probability: p.resistant_probability || 0,
       class: getAntibioticClass(p.antibiotic),
+      lab_result: p.lab_result || null,
+      match: p.match ?? null,
+      top_kmers: p.top_kmers || [],
     };
   });
 
