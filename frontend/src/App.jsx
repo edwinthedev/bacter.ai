@@ -123,8 +123,8 @@ const FileIcon = () => (
 const Navbar = ({ onHome }) => (
   <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '1px solid transparent' }}>
     <div onClick={onHome} style={{ cursor: 'pointer', display: 'flex', alignItems: 'baseline', gap: 2 }}>
-      <span style={{ fontSize: 22, fontWeight: 700, color: '#0d9488', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>bacter</span>
-      <span style={{ fontSize: 22, fontWeight: 700, color: '#111827', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>.ai</span>
+      <span style={{ fontSize: 35, fontWeight: 700, color: '#0d9488', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>bacter</span>
+      <span style={{ fontSize: 35, fontWeight: 700, color: '#111827', letterSpacing: '-0.03em', fontFamily: 'monospace' }}>.ai</span>
     </div>
     <span style={{ fontSize: 13, color: '#9ca3af', fontFamily: 'monospace', letterSpacing: '0.04em' }}>Clinical Resistance Analysis</span>
   </nav>
