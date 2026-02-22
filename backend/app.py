@@ -20,11 +20,16 @@ from flask_cors import CORS
 import joblib
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": [
+
+_allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    os.environ.get("FRONTEND_URL", ""),
-]}})
+]
+_frontend_url = os.environ.get("FRONTEND_URL", "").strip().rstrip("/")
+if _frontend_url:
+    _allowed_origins.append(_frontend_url)
+
+CORS(app, resources={r"/api/*": {"origins": _allowed_origins}})
 
 BASE_DIR = os.path.dirname(__file__)
 DEMO_DIR = os.path.join(BASE_DIR, "data", "demo_genomes")
