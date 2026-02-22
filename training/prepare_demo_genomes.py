@@ -2,6 +2,7 @@
 prepare_demo_genomes.py — Run demo genomes through trained models.
 
 Generates pre-computed JSON files for the backend API demo endpoints.
+Includes lab results from amr_all.csv and flags training set membership.
 """
 
 import numpy as np
@@ -41,6 +42,24 @@ TARGET_ANTIBIOTICS = [
 ]
 
 
+def load_lab_results(amr_df, genome_id):
+    """Extract lab-confirmed phenotypes from amr_all.csv for a genome."""
+    rows = amr_df[amr_df["genome_id"] == genome_id]
+    lab_results = {}
+    for _, row in rows.iterrows():
+        ab = row["antibiotic"]
+        phenotype = str(row.get("resistant_phenotype", "")).strip()
+        if phenotype in ("Resistant", "Susceptible"):
+            lab_results[ab] = {
+                "phenotype": phenotype,
+                "method": str(row.get("laboratory_typing_method", "")) or None,
+                "measurement": str(row.get("measurement_value", "")) or None,
+                "measurement_unit": str(row.get("measurement_unit", "")) or None,
+                "source": str(row.get("source", "")) or None,
+            }
+    return lab_results
+
+
 def main():
     print("Preparing demo genome predictions...")
 
@@ -51,6 +70,15 @@ def main():
     # Load known labels for validation display
     labels = pd.read_csv(os.path.join(PROCESSED_DIR, "label_matrix.csv"), index_col=0)
     labels.index = labels.index.astype(str)
+
+    # Load training genome IDs to flag exclusion
+    with open(os.path.join(PROCESSED_DIR, "genome_ids.json")) as f:
+        training_genome_ids = set(json.load(f))
+
+    # Load raw AMR lab data for ground-truth results
+    amr_path = os.path.join(DATA_DIR, "amr_all.csv")
+    amr_df = pd.read_csv(amr_path, dtype=str)
+    amr_df["antibiotic"] = amr_df["antibiotic"].str.lower()
 
     # Load SHAP data per antibiotic
     shap_data = {}
@@ -78,13 +106,20 @@ def main():
 
         print(f"\nProcessing {gid} ({name})...")
 
+        in_training_set = gid in training_genome_ids
+        print(f"  In training set: {in_training_set}")
+
+        # Get lab results from amr_all.csv
+        lab_results = load_lab_results(amr_df, gid)
+        print(f"  Lab results available: {len(lab_results)} antibiotics")
+
         # Extract k-mer features
         counts = count_kmers(fasta_path, kmer_index)
         total = counts.sum()
         features = (counts / total).astype(np.float32) if total > 0 else counts.astype(np.float32)
         X = features.reshape(1, -1)
 
-        # Get known labels
+        # Get known labels from label matrix
         known_labels = {}
         if gid in labels.index:
             row = labels.loc[gid]
@@ -99,12 +134,17 @@ def main():
             ab_safe = ab.replace("/", "_")
             model_path = os.path.join(MODELS_DIR, f"{ab_safe}.joblib")
 
+            # Lab result for this specific antibiotic
+            lab = lab_results.get(ab)
+            lab_phenotype = lab["phenotype"] if lab else known_labels.get(ab)
+
             if not os.path.exists(model_path):
                 predictions.append({
                     "antibiotic": ab,
                     "prediction": "No model",
                     "confidence": 0,
-                    "known_label": known_labels.get(ab),
+                    "lab_result": lab_phenotype,
+                    "lab_method": lab["method"] if lab else None,
                 })
                 continue
 
@@ -114,23 +154,28 @@ def main():
             confidence = float(prob[1]) if pred_class == 1 else float(prob[0])
 
             ab_metrics = metrics.get(ab, {})
-            top_kmers = shap_data.get(ab, [])[:5]
+            top_kmers = shap_data.get(ab, [])[:10]
+
+            pred_label = "Resistant" if pred_class == 1 else "Susceptible"
+            match = None
+            if lab_phenotype:
+                match = pred_label == lab_phenotype
 
             predictions.append({
                 "antibiotic": ab,
-                "prediction": "Resistant" if pred_class == 1 else "Susceptible",
+                "prediction": pred_label,
                 "confidence": round(confidence, 4),
                 "resistant_probability": round(float(prob[1]), 4),
-                "known_label": known_labels.get(ab),
+                "lab_result": lab_phenotype,
+                "lab_method": lab["method"] if lab else None,
+                "match": match,
                 "model_accuracy": ab_metrics.get("cv_accuracy"),
                 "model_f1": ab_metrics.get("cv_f1"),
                 "top_kmers": top_kmers,
             })
 
-            status = "MATCH" if known_labels.get(ab) == predictions[-1]["prediction"] else ""
-            if ab in known_labels:
-                status = status or "MISMATCH"
-            print(f"  {ab:40s} -> {predictions[-1]['prediction']:12s} (conf={confidence:.3f}) {status}")
+            status = "MATCH" if match is True else ("MISMATCH" if match is False else "")
+            print(f"  {ab:40s} -> {pred_label:12s} (conf={confidence:.3f}) lab={lab_phenotype or 'N/A':12s} {status}")
 
         # Compute genome stats from FASTA
         with open(fasta_path) as f:
@@ -143,12 +188,26 @@ def main():
         )
         print(f"  Inferred {len(resistance_genes)} resistance genes")
 
+        # Verification summary
+        verified = [p for p in predictions if p.get("match") is not None]
+        matches = sum(1 for p in verified if p["match"])
+        verification = {
+            "total_verified": len(verified),
+            "matches": matches,
+            "mismatches": len(verified) - matches,
+            "accuracy": round(matches / len(verified), 4) if verified else None,
+            "in_training_set": in_training_set,
+        }
+        print(f"  Verification: {matches}/{len(verified)} correct ({verification['accuracy'] or 0:.0%})")
+
         # Build output JSON
         output = {
             "genome_id": gid,
             "genome_name": name,
             "organism": "Escherichia coli",
+            "in_training_set": in_training_set,
             "predictions": predictions,
+            "verification": verification,
             "summary": {
                 "total_antibiotics": len(predictions),
                 "resistant_count": sum(1 for p in predictions if p["prediction"] == "Resistant"),

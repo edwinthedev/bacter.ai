@@ -1,0 +1,738 @@
+{
+  "ampicillin": {
+    "n_samples": 2293,
+    "n_resistant": 1273,
+    "n_susceptible": 1020,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.7430619276057566,
+      "ci_lower": 0.7256868730920192,
+      "ci_upper": 0.760575665067597
+    },
+    "f1": {
+      "mean": 0.7739074573866539,
+      "ci_lower": 0.756559581881533,
+      "ci_upper": 0.7905639020374563
+    },
+    "sensitivity": {
+      "mean": 0.7928664014364115,
+      "ci_lower": 0.7703535342267438,
+      "ci_upper": 0.81601430808845
+    },
+    "specificity": {
+      "mean": 0.6810225565740122,
+      "ci_lower": 0.6548859249870369,
+      "ci_upper": 0.7075973792060849
+    },
+    "confusion_matrix": {
+      "tp": 1009,
+      "fp": 325,
+      "fn": 264,
+      "tn": 695
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0676,
+        "observed": 0.1545
+      },
+      {
+        "predicted": 0.1473,
+        "observed": 0.1639
+      },
+      {
+        "predicted": 0.2469,
+        "observed": 0.28
+      },
+      {
+        "predicted": 0.3514,
+        "observed": 0.3724
+      },
+      {
+        "predicted": 0.4533,
+        "observed": 0.5247
+      },
+      {
+        "predicted": 0.5519,
+        "observed": 0.5936
+      },
+      {
+        "predicted": 0.6525,
+        "observed": 0.6364
+      },
+      {
+        "predicted": 0.7537,
+        "observed": 0.7192
+      },
+      {
+        "predicted": 0.8507,
+        "observed": 0.8398
+      },
+      {
+        "predicted": 0.9338,
+        "observed": 0.8683
+      }
+    ]
+  },
+  "ciprofloxacin": {
+    "n_samples": 2493,
+    "n_resistant": 1974,
+    "n_susceptible": 519,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.8486353790613719,
+      "ci_lower": 0.833533894905736,
+      "ci_upper": 0.8636181307661452
+    },
+    "f1": {
+      "mean": 0.9081619690161016,
+      "ci_lower": 0.898198408146144,
+      "ci_upper": 0.9175983027708041
+    },
+    "sensitivity": {
+      "mean": 0.9461727373866281,
+      "ci_lower": 0.9359626133977014,
+      "ci_upper": 0.9553078297365512
+    },
+    "specificity": {
+      "mean": 0.4790744478395765,
+      "ci_lower": 0.4333242753623189,
+      "ci_upper": 0.5193509434410835
+    },
+    "confusion_matrix": {
+      "tp": 1868,
+      "fp": 270,
+      "fn": 106,
+      "tn": 249
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0517,
+        "observed": 0.0455
+      },
+      {
+        "predicted": 0.1448,
+        "observed": 0.0779
+      },
+      {
+        "predicted": 0.2541,
+        "observed": 0.35
+      },
+      {
+        "predicted": 0.3497,
+        "observed": 0.4507
+      },
+      {
+        "predicted": 0.4553,
+        "observed": 0.5432
+      },
+      {
+        "predicted": 0.5509,
+        "observed": 0.6018
+      },
+      {
+        "predicted": 0.6509,
+        "observed": 0.7865
+      },
+      {
+        "predicted": 0.7522,
+        "observed": 0.8232
+      },
+      {
+        "predicted": 0.8554,
+        "observed": 0.8598
+      },
+      {
+        "predicted": 0.9497,
+        "observed": 0.9481
+      }
+    ]
+  },
+  "ceftriaxone": {
+    "n_samples": 801,
+    "n_resistant": 417,
+    "n_susceptible": 384,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.8091922596754056,
+      "ci_lower": 0.7815230961298377,
+      "ci_upper": 0.8339887640449438
+    },
+    "f1": {
+      "mean": 0.8111467805822354,
+      "ci_lower": 0.7807225817935494,
+      "ci_upper": 0.8384131489588247
+    },
+    "sensitivity": {
+      "mean": 0.7895232975005895,
+      "ci_lower": 0.7488576435783652,
+      "ci_upper": 0.8277576619681882
+    },
+    "specificity": {
+      "mean": 0.8304593105204732,
+      "ci_lower": 0.7928388746803069,
+      "ci_upper": 0.8677724933728365
+    },
+    "confusion_matrix": {
+      "tp": 329,
+      "fp": 65,
+      "fn": 88,
+      "tn": 319
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0406,
+        "observed": 0.0965
+      },
+      {
+        "predicted": 0.1414,
+        "observed": 0.1974
+      },
+      {
+        "predicted": 0.2425,
+        "observed": 0.3556
+      },
+      {
+        "predicted": 0.3456,
+        "observed": 0.6154
+      },
+      {
+        "predicted": 0.4467,
+        "observed": 0.5938
+      },
+      {
+        "predicted": 0.5475,
+        "observed": 0.5484
+      },
+      {
+        "predicted": 0.6515,
+        "observed": 0.5238
+      },
+      {
+        "predicted": 0.756,
+        "observed": 0.8056
+      },
+      {
+        "predicted": 0.8519,
+        "observed": 0.7647
+      },
+      {
+        "predicted": 0.9737,
+        "observed": 0.9137
+      }
+    ]
+  },
+  "gentamicin": {
+    "n_samples": 2522,
+    "n_resistant": 309,
+    "n_susceptible": 2213,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.8795515463917528,
+      "ci_lower": 0.8667724028548771,
+      "ci_upper": 0.8925555114988105
+    },
+    "f1": {
+      "mean": 0.3201492716546252,
+      "ci_lower": 0.26220892505054033,
+      "ci_upper": 0.376090169992609
+    },
+    "sensitivity": {
+      "mean": 0.23213175173801182,
+      "ci_lower": 0.18268474842767293,
+      "ci_upper": 0.28026895558851755
+    },
+    "specificity": {
+      "mean": 0.9699105532235903,
+      "ci_lower": 0.9623236757489065,
+      "ci_upper": 0.9772631664380514
+    },
+    "confusion_matrix": {
+      "tp": 72,
+      "fp": 66,
+      "fn": 237,
+      "tn": 2147
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0314,
+        "observed": 0.032
+      },
+      {
+        "predicted": 0.142,
+        "observed": 0.1702
+      },
+      {
+        "predicted": 0.2461,
+        "observed": 0.2456
+      },
+      {
+        "predicted": 0.3471,
+        "observed": 0.2923
+      },
+      {
+        "predicted": 0.4472,
+        "observed": 0.3295
+      },
+      {
+        "predicted": 0.5512,
+        "observed": 0.4915
+      },
+      {
+        "predicted": 0.6455,
+        "observed": 0.4211
+      },
+      {
+        "predicted": 0.7479,
+        "observed": 0.6429
+      },
+      {
+        "predicted": 0.8343,
+        "observed": 0.7273
+      },
+      {
+        "predicted": 0.9462,
+        "observed": 0.5
+      }
+    ]
+  },
+  "meropenem": {
+    "n_samples": 2327,
+    "n_resistant": 1282,
+    "n_susceptible": 1045,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.7247374301675977,
+      "ci_lower": 0.7069187795444779,
+      "ci_upper": 0.7434464976364418
+    },
+    "f1": {
+      "mean": 0.753912892218447,
+      "ci_lower": 0.7356709496093367,
+      "ci_upper": 0.7720391202207042
+    },
+    "sensitivity": {
+      "mean": 0.7656316064326889,
+      "ci_lower": 0.7418843640104706,
+      "ci_upper": 0.7884615908613938
+    },
+    "specificity": {
+      "mean": 0.6745905433007142,
+      "ci_lower": 0.6447317023026315,
+      "ci_upper": 0.7017351690531978
+    },
+    "confusion_matrix": {
+      "tp": 982,
+      "fp": 340,
+      "fn": 300,
+      "tn": 705
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0653,
+        "observed": 0.1119
+      },
+      {
+        "predicted": 0.1521,
+        "observed": 0.1696
+      },
+      {
+        "predicted": 0.2468,
+        "observed": 0.3008
+      },
+      {
+        "predicted": 0.3503,
+        "observed": 0.4105
+      },
+      {
+        "predicted": 0.451,
+        "observed": 0.4585
+      },
+      {
+        "predicted": 0.5548,
+        "observed": 0.5172
+      },
+      {
+        "predicted": 0.6473,
+        "observed": 0.6493
+      },
+      {
+        "predicted": 0.7543,
+        "observed": 0.7343
+      },
+      {
+        "predicted": 0.8513,
+        "observed": 0.8527
+      },
+      {
+        "predicted": 0.928,
+        "observed": 0.8869
+      }
+    ]
+  },
+  "trimethoprim/sulfamethoxazole": {
+    "n_samples": 1535,
+    "n_resistant": 1432,
+    "n_susceptible": 103,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.9252970684039087,
+      "ci_lower": 0.9120521172638436,
+      "ci_upper": 0.9387622149837134
+    },
+    "f1": {
+      "mean": 0.9604639477250978,
+      "ci_lower": 0.9532661553604318,
+      "ci_upper": 0.9677225420455656
+    },
+    "sensitivity": {
+      "mean": 0.9727720708982266,
+      "ci_lower": 0.963269688842208,
+      "ci_upper": 0.9809731853665867
+    },
+    "specificity": {
+      "mean": 0.26301750943598673,
+      "ci_lower": 0.17647058823529413,
+      "ci_upper": 0.3523949579831933
+    },
+    "confusion_matrix": {
+      "tp": 1393,
+      "fp": 76,
+      "fn": 39,
+      "tn": 27
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.1675,
+        "observed": 0.4615
+      },
+      {
+        "predicted": 0.2689,
+        "observed": 0.6154
+      },
+      {
+        "predicted": 0.3537,
+        "observed": 0.619
+      },
+      {
+        "predicted": 0.45,
+        "observed": 0.6316
+      },
+      {
+        "predicted": 0.5557,
+        "observed": 0.7333
+      },
+      {
+        "predicted": 0.6552,
+        "observed": 0.7667
+      },
+      {
+        "predicted": 0.7459,
+        "observed": 0.7627
+      },
+      {
+        "predicted": 0.8625,
+        "observed": 0.8779
+      },
+      {
+        "predicted": 0.9702,
+        "observed": 0.9746
+      }
+    ]
+  },
+  "ceftazidime": {
+    "n_samples": 2406,
+    "n_resistant": 1665,
+    "n_susceptible": 741,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.7387593516209476,
+      "ci_lower": 0.7211138819617623,
+      "ci_upper": 0.7552057356608478
+    },
+    "f1": {
+      "mean": 0.8211043291421464,
+      "ci_lower": 0.8071385824306395,
+      "ci_upper": 0.8343663761832155
+    },
+    "sensitivity": {
+      "mean": 0.8671602363323784,
+      "ci_lower": 0.8504975116492294,
+      "ci_upper": 0.8824992788533984
+    },
+    "specificity": {
+      "mean": 0.45084933219320933,
+      "ci_lower": 0.41379310344827586,
+      "ci_upper": 0.48489823348694316
+    },
+    "confusion_matrix": {
+      "tp": 1444,
+      "fp": 407,
+      "fn": 221,
+      "tn": 334
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0647,
+        "observed": 0.0484
+      },
+      {
+        "predicted": 0.1489,
+        "observed": 0.2078
+      },
+      {
+        "predicted": 0.2524,
+        "observed": 0.3059
+      },
+      {
+        "predicted": 0.3552,
+        "observed": 0.4638
+      },
+      {
+        "predicted": 0.4493,
+        "observed": 0.5803
+      },
+      {
+        "predicted": 0.5514,
+        "observed": 0.636
+      },
+      {
+        "predicted": 0.6539,
+        "observed": 0.7211
+      },
+      {
+        "predicted": 0.7489,
+        "observed": 0.7946
+      },
+      {
+        "predicted": 0.8502,
+        "observed": 0.8425
+      },
+      {
+        "predicted": 0.929,
+        "observed": 0.8878
+      }
+    ]
+  },
+  "tetracycline": {
+    "n_samples": 630,
+    "n_resistant": 377,
+    "n_susceptible": 253,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.7589761904761906,
+      "ci_lower": 0.7238095238095238,
+      "ci_upper": 0.7936507936507936
+    },
+    "f1": {
+      "mean": 0.8058340611562094,
+      "ci_lower": 0.7743527080581242,
+      "ci_upper": 0.8372804867407566
+    },
+    "sensitivity": {
+      "mean": 0.8355007519309882,
+      "ci_lower": 0.7980270042624876,
+      "ci_upper": 0.8743395572967095
+    },
+    "specificity": {
+      "mean": 0.6445933472945573,
+      "ci_lower": 0.5803861697350696,
+      "ci_upper": 0.7035883056459024
+    },
+    "confusion_matrix": {
+      "tp": 315,
+      "fp": 90,
+      "fn": 62,
+      "tn": 163
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0495,
+        "observed": 0.0441
+      },
+      {
+        "predicted": 0.1485,
+        "observed": 0.32
+      },
+      {
+        "predicted": 0.2527,
+        "observed": 0.2258
+      },
+      {
+        "predicted": 0.3517,
+        "observed": 0.4872
+      },
+      {
+        "predicted": 0.4512,
+        "observed": 0.4595
+      },
+      {
+        "predicted": 0.5452,
+        "observed": 0.5111
+      },
+      {
+        "predicted": 0.6411,
+        "observed": 0.6591
+      },
+      {
+        "predicted": 0.7571,
+        "observed": 0.7619
+      },
+      {
+        "predicted": 0.8608,
+        "observed": 0.7692
+      },
+      {
+        "predicted": 0.9548,
+        "observed": 0.866
+      }
+    ]
+  },
+  "chloramphenicol": {
+    "n_samples": 630,
+    "n_resistant": 81,
+    "n_susceptible": 549,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.8943222222222225,
+      "ci_lower": 0.8682539682539683,
+      "ci_upper": 0.9174603174603174
+    },
+    "f1": {
+      "mean": 0.5097894683896697,
+      "ci_lower": 0.4,
+      "ci_upper": 0.60994059132357
+    },
+    "sensitivity": {
+      "mean": 0.43269726911273315,
+      "ci_lower": 0.3242519305019305,
+      "ci_upper": 0.5416792168674698
+    },
+    "specificity": {
+      "mean": 0.9620085546639942,
+      "ci_lower": 0.9454520615996026,
+      "ci_upper": 0.976191564377122
+    },
+    "confusion_matrix": {
+      "tp": 35,
+      "fp": 21,
+      "fn": 46,
+      "tn": 528
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0139,
+        "observed": 0.061
+      },
+      {
+        "predicted": 0.1347,
+        "observed": 0.1515
+      },
+      {
+        "predicted": 0.2514,
+        "observed": 0.2308
+      },
+      {
+        "predicted": 0.356,
+        "observed": 0.2727
+      },
+      {
+        "predicted": 0.4451,
+        "observed": 0.4444
+      },
+      {
+        "predicted": 0.5506,
+        "observed": 0.6364
+      },
+      {
+        "predicted": 0.6585,
+        "observed": 0.3846
+      },
+      {
+        "predicted": 0.7559,
+        "observed": 0.7778
+      },
+      {
+        "predicted": 0.856,
+        "observed": 0.6
+      },
+      {
+        "predicted": 0.9451,
+        "observed": 0.7692
+      }
+    ]
+  },
+  "levofloxacin": {
+    "n_samples": 402,
+    "n_resistant": 232,
+    "n_susceptible": 170,
+    "cv_folds": 5,
+    "accuracy": {
+      "mean": 0.8412835820895522,
+      "ci_lower": 0.8009950248756219,
+      "ci_upper": 0.8756218905472637
+    },
+    "f1": {
+      "mean": 0.866886225739302,
+      "ci_lower": 0.8318496930733331,
+      "ci_upper": 0.8978745115067305
+    },
+    "sensitivity": {
+      "mean": 0.8974868602192113,
+      "ci_lower": 0.8577772988505746,
+      "ci_upper": 0.9333333333333333
+    },
+    "specificity": {
+      "mean": 0.764693119427179,
+      "ci_lower": 0.6976744186046512,
+      "ci_upper": 0.8313253012048193
+    },
+    "confusion_matrix": {
+      "tp": 208,
+      "fp": 40,
+      "fn": 24,
+      "tn": 130
+    },
+    "calibration_curve": [
+      {
+        "predicted": 0.0255,
+        "observed": 0.0215
+      },
+      {
+        "predicted": 0.1467,
+        "observed": 0.2
+      },
+      {
+        "predicted": 0.2537,
+        "observed": 0.4
+      },
+      {
+        "predicted": 0.3688,
+        "observed": 0.3889
+      },
+      {
+        "predicted": 0.4547,
+        "observed": 0.4615
+      },
+      {
+        "predicted": 0.5533,
+        "observed": 0.4
+      },
+      {
+        "predicted": 0.6622,
+        "observed": 0.7778
+      },
+      {
+        "predicted": 0.7449,
+        "observed": 0.6786
+      },
+      {
+        "predicted": 0.8576,
+        "observed": 0.8065
+      },
+      {
+        "predicted": 0.9751,
+        "observed": 0.9404
+      }
+    ]
+  }
+}

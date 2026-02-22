@@ -3,6 +3,8 @@ import axios from 'axios';
 import BacteriaSelector from './components/BacteriaSelector';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
+import VerificationPanel from './components/VerificationPanel';
+import ShapChart from './components/ShapChart';
 
 const getAntibioticClass = (drug) => {
   const classes = {
@@ -36,6 +38,9 @@ const transformApiResponse = (data) => {
       probability: p.resistant_probability || 0,
       confidence: p.confidence,
       class: getAntibioticClass(p.antibiotic),
+      lab_result: p.lab_result || null,
+      match: p.match ?? null,
+      top_kmers: p.top_kmers || [],
     };
   });
   return {
@@ -44,6 +49,7 @@ const transformApiResponse = (data) => {
     predictions,
     resistance_genes: data.resistance_genes || [],
     genome_data: data.genome_data || { chromosome: { length: 5100000 } },
+    verification: data.verification || null,
   };
 };
 
@@ -283,6 +289,15 @@ function App() {
                   resistanceGenes={analysisResults.resistance_genes}
                   onGeneClick={setActiveGene}
                 />
+              </div>
+
+              {/* Verification + SHAP row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+                <VerificationPanel
+                  predictions={analysisResults.predictions}
+                  verification={analysisResults.verification}
+                />
+                <ShapChart predictions={analysisResults.predictions} />
               </div>
             </>
           )}

@@ -1,321 +1,321 @@
 {
   "ampicillin": {
     "status": "trained",
-    "n_samples": 223,
-    "n_resistant": 125,
-    "n_susceptible": 98,
-    "cv_accuracy": 0.6861,
-    "cv_f1": 0.7308,
-    "cv_auc": 0.7535,
+    "n_samples": 2293,
+    "n_resistant": 1273,
+    "n_susceptible": 1020,
+    "cv_accuracy": 0.7431,
+    "cv_f1": 0.7741,
+    "cv_auc": 0.8048,
     "cv_folds": 5,
     "top_kmers": [
       {
         "kmer": "CGGCCG",
-        "importance": 1.1000664234161377
+        "importance": 0.4431282877922058
       },
       {
-        "kmer": "CCTAGG",
-        "importance": 0.22640836238861084
+        "kmer": "GCCGGC",
+        "importance": 0.19365465641021729
       },
       {
-        "kmer": "CTCCCT",
-        "importance": 0.19764523208141327
+        "kmer": "TGGCCA",
+        "importance": 0.15879085659980774
       },
       {
-        "kmer": "GGGCTC",
-        "importance": 0.1930643916130066
+        "kmer": "GGCCGC",
+        "importance": 0.1393314152956009
       },
       {
-        "kmer": "TCTAGC",
-        "importance": 0.16679826378822327
+        "kmer": "GCGGCC",
+        "importance": 0.10876385867595673
       }
     ]
   },
   "ciprofloxacin": {
     "status": "trained",
-    "n_samples": 316,
-    "n_resistant": 192,
-    "n_susceptible": 124,
-    "cv_accuracy": 0.6962,
-    "cv_f1": 0.7703,
-    "cv_auc": 0.7452,
+    "n_samples": 2493,
+    "n_resistant": 1974,
+    "n_susceptible": 519,
+    "cv_accuracy": 0.8492,
+    "cv_f1": 0.9086,
+    "cv_auc": 0.8266,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "GTTCGA",
-        "importance": 0.2237854301929474
+        "kmer": "GTCGAC",
+        "importance": 0.2162410020828247
       },
       {
-        "kmer": "CTTATA",
-        "importance": 0.2140287309885025
+        "kmer": "CACGTG",
+        "importance": 0.19551490247249603
       },
       {
-        "kmer": "ATGTGA",
-        "importance": 0.1467033326625824
+        "kmer": "CACCCC",
+        "importance": 0.1517172008752823
       },
       {
-        "kmer": "GTGTTA",
-        "importance": 0.14274832606315613
+        "kmer": "TGATCA",
+        "importance": 0.12146275490522385
       },
       {
-        "kmer": "CAATTA",
-        "importance": 0.13131651282310486
+        "kmer": "GATATC",
+        "importance": 0.10213861614465714
       }
     ]
   },
   "ceftriaxone": {
     "status": "trained",
-    "n_samples": 108,
-    "n_resistant": 62,
-    "n_susceptible": 46,
-    "cv_accuracy": 0.6111,
-    "cv_f1": 0.6667,
-    "cv_auc": 0.6315,
+    "n_samples": 801,
+    "n_resistant": 417,
+    "n_susceptible": 384,
+    "cv_accuracy": 0.809,
+    "cv_f1": 0.8113,
+    "cv_auc": 0.8904,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "TACTAT",
-        "importance": 0.5630185008049011
+        "kmer": "CACGTG",
+        "importance": 0.5866718888282776
       },
       {
-        "kmer": "ATTGGG",
-        "importance": 0.4110341966152191
+        "kmer": "ATTAAT",
+        "importance": 0.37080490589141846
       },
       {
-        "kmer": "ATGGCC",
-        "importance": 0.4089665114879608
+        "kmer": "CCATGG",
+        "importance": 0.2818530201911926
       },
       {
-        "kmer": "AATTAG",
-        "importance": 0.2934857904911041
+        "kmer": "GGTTCC",
+        "importance": 0.21654194593429565
       },
       {
         "kmer": "TGGCCA",
-        "importance": 0.21898114681243896
+        "importance": 0.18900975584983826
       }
     ]
   },
   "gentamicin": {
     "status": "trained",
-    "n_samples": 310,
-    "n_resistant": 39,
-    "n_susceptible": 271,
-    "cv_accuracy": 0.8645,
-    "cv_f1": 0.1923,
-    "cv_auc": 0.6639,
+    "n_samples": 2522,
+    "n_resistant": 309,
+    "n_susceptible": 2213,
+    "cv_accuracy": 0.8799,
+    "cv_f1": 0.3221,
+    "cv_auc": 0.8256,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "CCTAGG",
-        "importance": 0.5215060114860535
+        "kmer": "CCATGG",
+        "importance": 0.272294819355011
       },
       {
-        "kmer": "CGGCCG",
-        "importance": 0.5160467028617859
+        "kmer": "GCATGC",
+        "importance": 0.17175430059432983
       },
       {
-        "kmer": "GATTCG",
-        "importance": 0.4071073830127716
+        "kmer": "GGATTC",
+        "importance": 0.14987821877002716
       },
       {
-        "kmer": "GTCGAG",
-        "importance": 0.2630833387374878
+        "kmer": "GCGGCC",
+        "importance": 0.14402252435684204
       },
       {
-        "kmer": "TTCCAA",
-        "importance": 0.23120367527008057
+        "kmer": "CCTCGG",
+        "importance": 0.12055808305740356
       }
     ]
   },
   "meropenem": {
     "status": "trained",
-    "n_samples": 271,
-    "n_resistant": 97,
-    "n_susceptible": 174,
-    "cv_accuracy": 0.5793,
-    "cv_f1": 0.2875,
-    "cv_auc": 0.5739,
+    "n_samples": 2327,
+    "n_resistant": 1282,
+    "n_susceptible": 1045,
+    "cv_accuracy": 0.725,
+    "cv_f1": 0.7542,
+    "cv_auc": 0.7966,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "CTGGTC",
-        "importance": 0.3019213378429413
+        "kmer": "TTATAA",
+        "importance": 0.13855016231536865
       },
       {
-        "kmer": "CCGGTA",
-        "importance": 0.2717227339744568
+        "kmer": "GTCGAC",
+        "importance": 0.13369329273700714
       },
       {
-        "kmer": "AGATGT",
-        "importance": 0.25979310274124146
+        "kmer": "CAGCTG",
+        "importance": 0.12008009850978851
       },
       {
-        "kmer": "CGGTCC",
-        "importance": 0.24319520592689514
+        "kmer": "TATAAA",
+        "importance": 0.08967114239931107
       },
       {
-        "kmer": "GACATC",
-        "importance": 0.1950719952583313
+        "kmer": "CTCGAG",
+        "importance": 0.08737599849700928
       }
     ]
   },
   "trimethoprim/sulfamethoxazole": {
     "status": "trained",
-    "n_samples": 151,
-    "n_resistant": 124,
-    "n_susceptible": 27,
-    "cv_accuracy": 0.8013,
-    "cv_f1": 0.8855,
-    "cv_auc": 0.7345,
+    "n_samples": 1535,
+    "n_resistant": 1432,
+    "n_susceptible": 103,
+    "cv_accuracy": 0.9251,
+    "cv_f1": 0.9604,
+    "cv_auc": 0.8216,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "TGTAGT",
-        "importance": 0.5134041905403137
+        "kmer": "CGCGCG",
+        "importance": 0.29487574100494385
       },
       {
-        "kmer": "TGATCG",
-        "importance": 0.3622451722621918
+        "kmer": "GCTCGT",
+        "importance": 0.2889576554298401
       },
       {
-        "kmer": "TTAAGA",
-        "importance": 0.3397100269794464
+        "kmer": "CAGCTG",
+        "importance": 0.27083009481430054
       },
       {
-        "kmer": "CGCAAA",
-        "importance": 0.3298373818397522
+        "kmer": "CACGTG",
+        "importance": 0.2225852757692337
       },
       {
-        "kmer": "CACGAT",
-        "importance": 0.2638165056705475
+        "kmer": "CGACGA",
+        "importance": 0.14492040872573853
       }
     ]
   },
   "ceftazidime": {
     "status": "trained",
-    "n_samples": 288,
-    "n_resistant": 150,
-    "n_susceptible": 138,
-    "cv_accuracy": 0.5521,
-    "cv_f1": 0.5798,
-    "cv_auc": 0.549,
+    "n_samples": 2406,
+    "n_resistant": 1665,
+    "n_susceptible": 741,
+    "cv_accuracy": 0.739,
+    "cv_f1": 0.8214,
+    "cv_auc": 0.7318,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "ACTCCC",
-        "importance": 0.41803041100502014
+        "kmer": "AACGTT",
+        "importance": 0.12298011779785156
       },
       {
-        "kmer": "GTTACA",
-        "importance": 0.23984390497207642
+        "kmer": "CACGTG",
+        "importance": 0.11610474437475204
       },
       {
-        "kmer": "AAAATC",
-        "importance": 0.17170749604701996
+        "kmer": "AGGTTA",
+        "importance": 0.10114645212888718
       },
       {
-        "kmer": "ATGGGA",
-        "importance": 0.16654376685619354
+        "kmer": "GTCGAC",
+        "importance": 0.08907093107700348
       },
       {
-        "kmer": "ATTAGA",
-        "importance": 0.15983349084854126
+        "kmer": "CACCCC",
+        "importance": 0.08762886375188828
       }
     ]
   },
   "tetracycline": {
     "status": "trained",
-    "n_samples": 83,
-    "n_resistant": 44,
-    "n_susceptible": 39,
-    "cv_accuracy": 0.6867,
-    "cv_f1": 0.6905,
-    "cv_auc": 0.7681,
+    "n_samples": 630,
+    "n_resistant": 377,
+    "n_susceptible": 253,
+    "cv_accuracy": 0.7587,
+    "cv_f1": 0.8056,
+    "cv_auc": 0.8185,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "GCGGCC",
-        "importance": 0.7269914746284485
-      },
-      {
         "kmer": "CGGCCG",
-        "importance": 0.45243850350379944
+        "importance": 0.8897600173950195
       },
       {
-        "kmer": "TTAACA",
-        "importance": 0.37854692339897156
+        "kmer": "GCCGGC",
+        "importance": 0.2846902906894684
       },
       {
-        "kmer": "CTGACT",
-        "importance": 0.2964531183242798
+        "kmer": "CTTGGA",
+        "importance": 0.24980799853801727
       },
       {
-        "kmer": "GGTCTG",
-        "importance": 0.2208375334739685
+        "kmer": "CCTATT",
+        "importance": 0.22915133833885193
+      },
+      {
+        "kmer": "GCATCT",
+        "importance": 0.20670916140079498
       }
     ]
   },
   "chloramphenicol": {
     "status": "trained",
-    "n_samples": 85,
-    "n_resistant": 11,
-    "n_susceptible": 74,
-    "cv_accuracy": 0.7647,
-    "cv_f1": 0.0,
-    "cv_auc": 0.5749,
+    "n_samples": 630,
+    "n_resistant": 81,
+    "n_susceptible": 549,
+    "cv_accuracy": 0.8937,
+    "cv_f1": 0.5109,
+    "cv_auc": 0.8571,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "CAAACC",
-        "importance": 1.1895155906677246
+        "kmer": "CGGCCG",
+        "importance": 0.6060678362846375
       },
       {
-        "kmer": "CACTGG",
-        "importance": 0.6238918900489807
+        "kmer": "CAGCTG",
+        "importance": 0.4604848325252533
       },
       {
-        "kmer": "ACGGCC",
-        "importance": 0.5643526911735535
+        "kmer": "GAGCTC",
+        "importance": 0.3684031665325165
       },
       {
-        "kmer": "GCATTT",
-        "importance": 0.3785136044025421
+        "kmer": "GGCGCC",
+        "importance": 0.21402697265148163
       },
       {
-        "kmer": "CCTAAG",
-        "importance": 0.3258534073829651
+        "kmer": "CCAAGG",
+        "importance": 0.20821833610534668
       }
     ]
   },
   "levofloxacin": {
     "status": "trained",
-    "n_samples": 76,
-    "n_resistant": 44,
-    "n_susceptible": 32,
-    "cv_accuracy": 0.7237,
-    "cv_f1": 0.764,
-    "cv_auc": 0.8018,
+    "n_samples": 402,
+    "n_resistant": 232,
+    "n_susceptible": 170,
+    "cv_accuracy": 0.8408,
+    "cv_f1": 0.8667,
+    "cv_auc": 0.9231,
     "cv_folds": 5,
     "top_kmers": [
       {
-        "kmer": "TAAATG",
-        "importance": 0.8423203825950623
+        "kmer": "ATTAAT",
+        "importance": 1.42556631565094
       },
       {
-        "kmer": "CTACTA",
-        "importance": 0.3810793459415436
+        "kmer": "CTCGAG",
+        "importance": 0.6945101022720337
       },
       {
-        "kmer": "CGACCC",
-        "importance": 0.3357202410697937
+        "kmer": "TCGGTC",
+        "importance": 0.5215227007865906
       },
       {
-        "kmer": "CGCGGC",
-        "importance": 0.2533303201198578
+        "kmer": "TGATAC",
+        "importance": 0.16648198664188385
       },
       {
-        "kmer": "AGAGGA",
-        "importance": 0.252016544342041
+        "kmer": "AGTTTT",
+        "importance": 0.15669572353363037
       }
     ]
   }

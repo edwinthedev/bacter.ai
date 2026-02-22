@@ -1,82 +1,82 @@
 [
   {
-    "kmer": "TGTAGT",
-    "importance": 0.5134041905403137
+    "kmer": "CGCGCG",
+    "importance": 0.29487574100494385
   },
   {
-    "kmer": "TGATCG",
-    "importance": 0.3622451722621918
+    "kmer": "GCTCGT",
+    "importance": 0.2889576554298401
   },
   {
-    "kmer": "TTAAGA",
-    "importance": 0.3397100269794464
+    "kmer": "CAGCTG",
+    "importance": 0.27083009481430054
   },
   {
-    "kmer": "CGCAAA",
-    "importance": 0.3298373818397522
+    "kmer": "CACGTG",
+    "importance": 0.2225852757692337
   },
   {
-    "kmer": "CACGAT",
-    "importance": 0.2638165056705475
+    "kmer": "CGACGA",
+    "importance": 0.14492040872573853
   },
   {
-    "kmer": "TCGGGG",
-    "importance": 0.1583290547132492
+    "kmer": "GGCGCC",
+    "importance": 0.1415654718875885
   },
   {
-    "kmer": "CGAGAC",
-    "importance": 0.15010665357112885
+    "kmer": "CACACC",
+    "importance": 0.13729000091552734
   },
   {
-    "kmer": "TTCAGT",
-    "importance": 0.1487276256084442
+    "kmer": "GGATCC",
+    "importance": 0.12992332875728607
   },
   {
-    "kmer": "CGGAAC",
-    "importance": 0.14553667604923248
+    "kmer": "ATTAAT",
+    "importance": 0.12272778153419495
   },
   {
-    "kmer": "CACCTG",
-    "importance": 0.1310330182313919
+    "kmer": "GCTCTG",
+    "importance": 0.11928648501634598
   },
   {
-    "kmer": "TGACTT",
-    "importance": 0.1278979778289795
+    "kmer": "CGTAAG",
+    "importance": 0.11150463670492172
   },
   {
-    "kmer": "CGCGAT",
-    "importance": 0.1203637570142746
+    "kmer": "GGTCCC",
+    "importance": 0.1006777212023735
   },
   {
-    "kmer": "AAACGA",
-    "importance": 0.11430874466896057
+    "kmer": "CCTTGT",
+    "importance": 0.09051015973091125
   },
   {
-    "kmer": "AAGTTG",
-    "importance": 0.10444842278957367
+    "kmer": "ATGCAT",
+    "importance": 0.09003705531358719
   },
   {
-    "kmer": "GGAAAG",
-    "importance": 0.10004071891307831
+    "kmer": "ACTCCT",
+    "importance": 0.08438175171613693
   },
   {
-    "kmer": "AGTTAT",
-    "importance": 0.08980279415845871
+    "kmer": "CAGCAG",
+    "importance": 0.08365391939878464
   },
   {
-    "kmer": "CTGGCT",
-    "importance": 0.08595888316631317
+    "kmer": "TTCGAA",
+    "importance": 0.08099587261676788
   },
   {
-    "kmer": "GAAACG",
-    "importance": 0.08531264960765839
+    "kmer": "GAGAAA",
+    "importance": 0.07925353199243546
   },
   {
-    "kmer": "CATTGC",
-    "importance": 0.08110879361629486
+    "kmer": "TAGGCT",
+    "importance": 0.07101885974407196
   },
   {
-    "kmer": "GAACGC",
-    "importance": 0.08082916587591171
+    "kmer": "TTCTCT",
+    "importance": 0.06414102762937546
   }
 ]
