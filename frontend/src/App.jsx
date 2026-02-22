@@ -3,6 +3,8 @@ import axios from 'axios';
 import Antibiogram from './components/Antibiogram';
 import CircularGenomePlot from './components/CircularGenomePlot';
 import MechanismDiagrams from './components/MechanismDiagrams';
+import StatisticsPanel from './components/StatisticsPanel';
+
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const getAntibioticClass = (drug) => ({
@@ -386,10 +388,58 @@ const TabMechanisms = ({ results }) => {
   );
 };
 
+// ─── Tab: Statistics ─────────────────────────────────────────────────────────
+const TabStatistics = ({ results }) => {
+  const totalDrugs = Object.keys(results.predictions).length;
+  const resistant = results.resistant_count || Object.values(results.predictions).filter(p => p.prediction === 'resistant').length;
+  const susceptible = results.susceptible_count || Object.values(results.predictions).filter(p => p.prediction === 'susceptible').length;
+  const mobileElements = results.resistance_genes?.filter(g => g.location === 'plasmid').length || 0;
+
+  return (
+    <div style={{ maxWidth: 720 }}>
+      <h3 style={{ fontSize: 14, fontWeight: 600, color: '#111827', marginBottom: 12 }}>Summary statistics</h3>
+      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
+        <div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#111827' }}>{totalDrugs}</div>
+          <div style={{ fontSize: 13, color: '#6b7280' }}>Antibiotics analyzed</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#dc2626' }}>{resistant}</div>
+          <div style={{ fontSize: 13, color: '#6b7280' }}>Resistant</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#16a34a' }}>{susceptible}</div>
+          <div style={{ fontSize: 13, color: '#6b7280' }}>Susceptible</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 28, fontWeight: 700, color: '#f97316' }}>{mobileElements}</div>
+          <div style={{ fontSize: 13, color: '#6b7280' }}>Mobile elements</div>
+        </div>
+      </div>
+
+      <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
+        <h4 style={{ fontSize: 13, fontWeight: 600, color: '#111827', marginBottom: 8 }}>Top resistant antibiotics</h4>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {Object.entries(results.predictions)
+            .filter(([, v]) => v.prediction === 'resistant')
+            .sort(([, a], [, b]) => b.probability - a.probability)
+            .slice(0, 5)
+            .map(([drug, data]) => (
+              <li key={drug} style={{ padding: '8px 0', borderBottom: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ textTransform: 'capitalize', color: '#111827' }}>{drug}</span>
+                <span style={{ color: '#9ca3af' }}>{Math.round(data.probability * 100)}% resistant</span>
+              </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
 // ─── Results View with Tabs ───────────────────────────────────────────────────
 const ResultsView = ({ pathogen, results, fileName, onBack }) => {
   const [activeTab, setActiveTab] = useState('Overview');
-  const tabs = ['Overview', 'Antibiogram', 'Genome Map', 'Mechanisms', 'Recommendations'];
+  const tabs = ['Overview', 'Antibiogram', 'Genome Map', 'Mechanisms', 'Statistics', 'Recommendations'];
 
   const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -458,6 +508,9 @@ const ResultsView = ({ pathogen, results, fileName, onBack }) => {
         )}
         {activeTab === 'Mechanisms' && (
           <MechanismDiagrams resistanceGenes={results.resistance_genes} />
+        )}
+        {activeTab === 'Statistics' && (
+          <StatisticsPanel predictions={results.predictions} />
         )}
         {activeTab === 'Recommendations' && (
           <div style={{ maxWidth: 640 }}>
