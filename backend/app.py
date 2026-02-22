@@ -11,8 +11,10 @@ Endpoints:
 
 import json
 import os
+import re
 import sys
 import numpy as np
+import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import joblib
@@ -48,15 +50,31 @@ TARGET_ANTIBIOTICS = [
 MODELS = {}
 SHAP_DATA = {}
 METRICS = {}
+AMR_DF = None
+TRAINING_GENOME_IDS = set()
 
 
 def load_models():
-    """Load all trained models and SHAP data at startup."""
-    global METRICS
+    """Load all trained models, SHAP data, and AMR lab data at startup."""
+    global METRICS, AMR_DF, TRAINING_GENOME_IDS
     metrics_path = os.path.join(MODELS_DIR, "metrics.json")
     if os.path.exists(metrics_path):
         with open(metrics_path) as f:
             METRICS = json.load(f)
+
+    # Load AMR phenotype lab data for verification
+    amr_path = os.path.join(BASE_DIR, "..", "training", "data", "amr_all.csv")
+    if os.path.exists(amr_path):
+        AMR_DF = pd.read_csv(amr_path, dtype=str)
+        AMR_DF["antibiotic"] = AMR_DF["antibiotic"].str.lower()
+        print(f"Loaded AMR lab data: {len(AMR_DF)} rows")
+
+    # Load training genome IDs to flag training set membership
+    gids_path = os.path.join(BASE_DIR, "..", "training", "data", "processed", "genome_ids.json")
+    if os.path.exists(gids_path):
+        with open(gids_path) as f:
+            TRAINING_GENOME_IDS = set(json.load(f))
+        print(f"Loaded {len(TRAINING_GENOME_IDS)} training genome IDs")
 
     for ab in TARGET_ANTIBIOTICS:
         ab_safe = ab.replace("/", "_")
@@ -70,6 +88,37 @@ def load_models():
                 SHAP_DATA[ab] = json.load(f)
 
     print(f"Loaded {len(MODELS)} models: {list(MODELS.keys())}")
+
+
+def parse_genome_id(fasta_text):
+    """Extract genome ID (e.g. '562.100018') from the first FASTA header line."""
+    for line in fasta_text.strip().split("\n"):
+        if line.startswith(">"):
+            # Match patterns like 562.100018 in headers like:
+            # >accn|562.100018.con.0004  ERR... [Escherichia coli ... | 562.100018]
+            match = re.search(r"\b(562\.\d+)\b", line)
+            if match:
+                return match.group(1)
+    return None
+
+
+def get_lab_results(genome_id):
+    """Look up lab-confirmed AMR phenotypes from amr_all.csv for a genome."""
+    if AMR_DF is None or genome_id is None:
+        return {}
+    rows = AMR_DF[AMR_DF["genome_id"] == genome_id]
+    lab_results = {}
+    for _, row in rows.iterrows():
+        ab = row["antibiotic"]
+        phenotype = str(row.get("resistant_phenotype", "")).strip()
+        if phenotype in ("Resistant", "Susceptible"):
+            lab_results[ab] = {
+                "phenotype": phenotype,
+                "method": str(row.get("laboratory_typing_method", "")) or None,
+                "measurement": str(row.get("measurement_value", "")) or None,
+                "measurement_unit": str(row.get("measurement_unit", "")) or None,
+            }
+    return lab_results
 
 
 def extract_kmers_from_fasta_text(fasta_text):
@@ -150,6 +199,11 @@ def analyze_fasta():
     if len(fasta_text.strip()) < 100:
         return jsonify({"error": "FASTA sequence too short"}), 400
 
+    # Parse genome ID from FASTA header for lab result lookup
+    genome_id = parse_genome_id(fasta_text)
+    lab_results = get_lab_results(genome_id)
+    in_training_set = genome_id in TRAINING_GENOME_IDS if genome_id else False
+
     # Extract k-mer features
     features = extract_kmers_from_fasta_text(fasta_text)
     X = features.reshape(1, -1)
@@ -157,12 +211,17 @@ def analyze_fasta():
     # Run through each model
     predictions = []
     for ab in TARGET_ANTIBIOTICS:
+        lab = lab_results.get(ab)
+        lab_phenotype = lab["phenotype"] if lab else None
+
         if ab not in MODELS:
             predictions.append({
                 "antibiotic": ab,
                 "prediction": "No model",
                 "confidence": 0,
                 "resistant_probability": 0,
+                "lab_result": lab_phenotype,
+                "match": None,
             })
             continue
 
@@ -174,14 +233,20 @@ def analyze_fasta():
         ab_metrics = METRICS.get(ab, {})
         top_kmers = SHAP_DATA.get(ab, [])[:10]
 
+        pred_label = "Resistant" if pred_class == 1 else "Susceptible"
+        match = (pred_label == lab_phenotype) if lab_phenotype else None
+
         predictions.append({
             "antibiotic": ab,
-            "prediction": "Resistant" if pred_class == 1 else "Susceptible",
+            "prediction": pred_label,
             "confidence": round(confidence, 4),
             "resistant_probability": round(float(prob[1]), 4),
             "model_accuracy": ab_metrics.get("cv_accuracy"),
             "model_f1": ab_metrics.get("cv_f1"),
             "top_kmers": top_kmers,
+            "lab_result": lab_phenotype,
+            "lab_method": lab["method"] if lab else None,
+            "match": match,
         })
 
     # Extract genome name from first FASTA header
@@ -229,8 +294,8 @@ def analyze_fasta():
         "genome_data": genome_stats,
         "resistance_genes": resistance_genes,
         "shap": shap_by_drug,
-        "lab_results": {},
-        "genome_in_training_set": False,
+        "lab_results": {ab: lr["phenotype"].lower() for ab, lr in lab_results.items()},
+        "genome_in_training_set": in_training_set,
     })
 
 
