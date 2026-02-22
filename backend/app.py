@@ -197,6 +197,10 @@ def analyze_fasta():
     if len(fasta_text.strip()) < 100:
         return jsonify({"error": "FASTA sequence too short"}), 400
 
+    # Cap at 50 MB to prevent memory exhaustion
+    if len(fasta_text) > 50_000_000:
+        return jsonify({"error": "FASTA sequence too large (max 50 MB)"}), 400
+
     # Parse genome ID from FASTA header for lab result lookup
     genome_id = parse_genome_id(fasta_text)
     lab_results = get_lab_results(genome_id)
@@ -318,4 +322,4 @@ def get_validation():
 load_models()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)

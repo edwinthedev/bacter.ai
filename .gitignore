@@ -14,3 +14,7 @@ frontend/.vite/
 .idea/
 .DS_Store
 Thumbs.db
+*.bak
+*.log
+.env
+.env.*
