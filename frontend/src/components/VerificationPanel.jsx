@@ -73,7 +73,7 @@ export default function VerificationPanel({
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #f3f4f6" }}>
-            {["Antibiotic", "Predicted", "Lab result", ""].map(h => (
+            {["Antibiotic", "Predicted", "Lab result", "Match?"].map(h => (
               <th key={h} style={{
                 textAlign: h === "" ? "right" : "left",
                 padding: "7px 8px", color: "#9ca3af",
